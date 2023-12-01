@@ -29,7 +29,10 @@
 <h1>Hello {uppercaseName}, {age}!</h1>
 <button on:click={incrementAge}>Change Age</button>
 <button on:click={changeName}>Change Age</button>
+<br />
 <input type="text" value={name} on:input={nameInput} />
+<br />
+<input type="text" bind:value={name} />
 
 <style>
   h1 {
