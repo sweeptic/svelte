@@ -1,11 +1,11 @@
 <script>
   import ContactCard from './ContactCard.svelte';
 
-  export let name = 'Max';
-  export let age = 12;
-  export let title = 'title';
-  export let imageUrl =
-    'https://unsplash.com/photos/the-sun-is-setting-over-a-desert-landscape-lzXhI_uxnvo';
+  export let name = '';
+  export let age = '';
+  export let title = '';
+  export let imageUrl = '';
+
   export let description = 'description <strong>abc</strong>';
 
   $: uppercaseName = name.toUpperCase(); // label statement

@@ -6,8 +6,8 @@
 </script>
 
 <div class="contact-card">
-  <header>
-    <div class="thumb">
+  <header class:thumb-placeholder={!imageUrl}>
+    <div class={'thumb'}>
       <img src={imageUrl} alt={'link'} />
     </div>
     <div class="user-data">
@@ -38,6 +38,10 @@
   .thumb {
     width: 33%;
     height: 100%;
+  }
+
+  .thumb-placeholder {
+    background-color: lightgreen;
   }
 
   img {
