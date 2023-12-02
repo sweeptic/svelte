@@ -3,10 +3,13 @@
   export let jobTitle;
   export let description;
   export let userImage;
+  export let removePassword;
+  export let i;
   const initialName = name;
 </script>
 
 <div class="contact-card">
+  <button on:click={removePassword.bind(this, i)}>Delete</button>
   <header>
     <div class="thumb" class:thumb-placeholder={!userImage}>
       <img src={userImage} alt={name} />

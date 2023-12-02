@@ -2,9 +2,9 @@
   import ContactCard from './ContactCard.svelte';
 
   let name = 'Max';
-  let title = '';
-  let image = '';
-  let description = '';
+  let title = 'a';
+  let image = 'b';
+  let description = 'c';
   let formState = 'empty';
 
   let createdContacts = [];
@@ -45,6 +45,12 @@
   function deleteLast(params) {
     createdContacts = createdContacts.slice(0, -1);
   }
+
+  function removePassword(param) {
+    const newArr = [...createdContacts];
+    newArr.splice(param, 1);
+    createdContacts = [...newArr];
+  }
 </script>
 
 <div id="form">
@@ -79,6 +85,8 @@
 {#each createdContacts as contact, i (contact.id)}
   <h2># {i}</h2>
   <ContactCard
+    {i}
+    {removePassword}
     name={contact.name}
     jobTitle={contact.jobTitle}
     description={contact.description}
