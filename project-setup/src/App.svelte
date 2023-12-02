@@ -3,6 +3,10 @@
 
   export let name = 'Max';
   export let age = 12;
+  export let title = 'title';
+  export let imageUrl =
+    'https://unsplash.com/photos/the-sun-is-setting-over-a-desert-landscape-lzXhI_uxnvo';
+  export let description = 'description';
 
   $: uppercaseName = name.toUpperCase(); // label statement
 
@@ -32,13 +36,16 @@
 <button on:click={incrementAge}>Change Age</button>
 <button on:click={changeName}>Change Age</button>
 <br />
-<input type="text" value={name} on:input={nameInput} />
 <br />
 <input type="text" bind:value={name} />
+<br />
+<input type="text" bind:value={title} />
+<br />
+<input type="text" bind:value={imageUrl} />
+<br />
+<input type="text" bind:value={description} />
 
-<!-- <ContactCard>abc</ContactCard> -->
-
-<ContactCard />
+<ContactCard {name} {title} {description} {imageUrl} />
 
 <style>
   h1 {

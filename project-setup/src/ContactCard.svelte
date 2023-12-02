@@ -1,17 +1,22 @@
 <script>
+  export let name;
+  export let title;
+  export let description;
+  export let imageUrl;
 </script>
 
 <div class="contact-card">
   <header>
     <div class="thumb">
-      <img src="" alt="" />
+      <img src={imageUrl} alt={'link'} />
     </div>
     <div class="user-data">
-      <h2>Job Title</h2>
+      <h1>{name}</h1>
+      <h2>Job {title}</h2>
     </div>
   </header>
   <div class="description">
-    <p>A short description</p>
+    <p>A short {description}</p>
   </div>
 </div>
 
