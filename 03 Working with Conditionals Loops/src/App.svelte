@@ -22,6 +22,7 @@
     console.log('push');
 
     createdContacts = [
+      // EQUAL SIGN TRIGGER :DDDDDDD
       ...createdContacts,
       {
         id: Math.random(),
@@ -49,7 +50,7 @@
   function removePassword(param) {
     const newArr = [...createdContacts];
     newArr.splice(param, 1);
-    createdContacts = [...newArr];
+    createdContacts = newArr;
   }
 </script>
 
@@ -87,7 +88,7 @@
   <ContactCard
     {i}
     {removePassword}
-    name={contact.name}
+    name={contact.name + Math.round(contact.id * 100)}
     jobTitle={contact.jobTitle}
     description={contact.description}
     userImage={contact.image}

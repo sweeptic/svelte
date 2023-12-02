@@ -5,7 +5,7 @@
   export let userImage;
   export let removePassword;
   export let i;
-  const initialName = name;
+  //   const initialName = name;
 </script>
 
 <div class="contact-card">
@@ -15,7 +15,7 @@
       <img src={userImage} alt={name} />
     </div>
     <div class="user-data">
-      <h1>{name} / {initialName}</h1>
+      <h1>{name}</h1>
       <h2>{jobTitle}</h2>
     </div>
   </header>
