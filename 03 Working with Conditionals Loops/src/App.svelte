@@ -1,18 +1,16 @@
 <script>
-  import ContactCard from "./ContactCard.svelte";
+  import ContactCard from './ContactCard.svelte';
 
-  let name = "Max";
-  let title = "";
-  let image = "";
-  let description = "";
-</script>
+  let name = 'Max';
+  let title = '';
+  let image = '';
+  let description = '';
+  let done = false;
 
-<style>
-  #form {
-    width: 30rem;
-    max-width: 100%;
+  function addContact() {
+    done = true;
   }
-</style>
+</script>
 
 <div id="form">
   <div class="form-control">
@@ -33,4 +31,20 @@
   </div>
 </div>
 
-<ContactCard userName={name} jobTitle={title} {description} userImage={image} />
+<button on:click={addContact}>Add Contact Card</button>
+
+{#if done}
+  <ContactCard
+    userName={name}
+    jobTitle={title}
+    {description}
+    userImage={image}
+  />
+{/if}
+
+<style>
+  #form {
+    width: 30rem;
+    max-width: 100%;
+  }
+</style>
