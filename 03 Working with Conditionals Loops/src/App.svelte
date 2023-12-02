@@ -6,12 +6,6 @@
   let image = '';
   let description = '';
   let formState = 'empty';
-  let createdContact = {
-    name: name,
-    jobTitle: title,
-    imageUrl: image,
-    desc: description,
-  };
 
   let createdContacts = [];
 
@@ -27,18 +21,36 @@
     }
     console.log('push');
 
-    createdContacts = [...createdContacts, createdContact];
+    createdContacts = [
+      ...createdContacts,
+      {
+        id: Math.random(),
+        name: name,
+        jobTitle: title,
+        imageUrl: image,
+        desc: description,
+      },
+    ];
 
     // createdContacts.push(contact);
 
     formState = 'done';
   }
+
+  function deleteFirst(params) {
+    // createdContacts.shift();
+    createdContacts = createdContacts.slice(1);
+  }
+
+  function deleteLast(params) {
+    createdContacts = createdContacts.slice(0, -1);
+  }
 </script>
 
 <div id="form">
   <div class="form-control">
-    <label for="userName">User Name</label>
-    <input type="text" bind:value={name} id="userName" />
+    <label for="name">User Name</label>
+    <input type="text" bind:value={name} id="name" />
   </div>
   <div class="form-control">
     <label for="jobTitle">Job Title</label>
@@ -55,6 +67,8 @@
 </div>
 
 <button on:click={addContact}>Add Contact Card</button>
+<button on:click={deleteFirst}>Delete First</button>
+<button on:click={deleteLast}>Delete Last</button>
 
 {#if formState === 'invalid'}
   <p>Invalid input</p>
@@ -62,10 +76,10 @@
   <p>Please enter some data and hit the button</p>
 {/if}
 
-{#each createdContacts as contact, index}
-  <h2># {index}</h2>
+{#each createdContacts as contact, i (contact.id)}
+  <h2># {i}</h2>
   <ContactCard
-    userName={contact.name}
+    name={contact.name}
     jobTitle={contact.jobTitle}
     description={contact.description}
     userImage={contact.image}
