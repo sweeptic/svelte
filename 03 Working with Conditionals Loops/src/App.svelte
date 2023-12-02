@@ -9,7 +9,11 @@
 
   let createdContacts = [];
 
-  function addContact() {
+  function addContact(event, b, c) {
+    console.log('event', event);
+    console.log('b', b);
+    console.log('c', c);
+
     if (
       name.trim().length === 0 ||
       title.trim().length === 0 ||
@@ -72,8 +76,16 @@
     <textarea rows="3" bind:value={description} id="desc" />
   </div>
 </div>
+<!-- event modifiers -->
+<!-- once -->
+<!-- passive -->
+<!-- capture -->
+<!-- stopPropagation -->
+<!-- preventDefault -->
 
-<button on:click={addContact}>Add Contact Card</button>
+<button on:click|stopPropagation={addContact.bind(this, 'abc')}
+  >Add Contact Card</button
+>
 <button on:click={deleteFirst}>Delete First</button>
 <button on:click={deleteLast}>Delete Last</button>
 
