@@ -5,6 +5,21 @@
   export let userImage;
 </script>
 
+<div class="contact-card">
+  <header>
+    <div class="thumb" class:thumb-placeholder={!userImage}>
+      <img src={userImage} alt={userName} />
+    </div>
+    <div class="user-data">
+      <h1>{userName}</h1>
+      <h2>{jobTitle}</h2>
+    </div>
+  </header>
+  <div class="description">
+    <p>{description}</p>
+  </div>
+</div>
+
 <style>
   .contact-card {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
@@ -46,7 +61,7 @@
 
   h1 {
     font-size: 1.25rem;
-    font-family: "Roboto Slab", sans-serif;
+    font-family: 'Roboto Slab', sans-serif;
     margin: 0.5rem 0;
   }
 
@@ -63,18 +78,3 @@
     padding: 1rem;
   }
 </style>
-
-<div class="contact-card">
-  <header>
-    <div class="thumb" class:thumb-placeholder="{!userImage}">
-      <img src={userImage} alt={userName} />
-    </div>
-    <div class="user-data">
-      <h1>{userName}</h1>
-      <h2>{jobTitle}</h2>
-    </div>
-  </header>
-  <div class="description">
-    <p>{description}</p>
-  </div>
-</div>
