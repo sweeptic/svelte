@@ -16,7 +16,7 @@
     </div>
   </header>
   <div class="description">
-    <p>A short {description}</p>
+    <p>A short {@html description}</p>
   </div>
 </div>
 

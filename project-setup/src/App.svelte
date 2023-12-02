@@ -6,7 +6,7 @@
   export let title = 'title';
   export let imageUrl =
     'https://unsplash.com/photos/the-sun-is-setting-over-a-desert-landscape-lzXhI_uxnvo';
-  export let description = 'description';
+  export let description = 'description <strong>abc</strong>';
 
   $: uppercaseName = name.toUpperCase(); // label statement
 
@@ -33,6 +33,7 @@
 
 <h1>Hello {name.toUpperCase()}, {age}!</h1>
 <h1>Hello {uppercaseName}, {age}!</h1>
+
 <button on:click={incrementAge}>Change Age</button>
 <button on:click={changeName}>Change Age</button>
 <br />
