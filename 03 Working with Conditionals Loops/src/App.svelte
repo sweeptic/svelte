@@ -83,8 +83,12 @@
 <!-- stopPropagation -->
 <!-- preventDefault -->
 
-<button on:click|stopPropagation={addContact.bind(this, 'abc')}
+<!-- <button on:click|stopPropagation={addContact.bind(this, 'param')}
   >Add Contact Card</button
+> -->
+
+<button on:click|stopPropagation={(ev) => addContact(ev, 'param')}
+  >Add Contact Card arrow</button
 >
 <button on:click={deleteFirst}>Delete First</button>
 <button on:click={deleteLast}>Delete Last</button>
