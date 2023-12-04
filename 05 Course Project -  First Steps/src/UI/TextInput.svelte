@@ -1,19 +1,17 @@
 <script>
-  // your script goes here
-
+  export let controlType;
   export let id;
   export let label;
+  export let rows;
   export let value;
   export let type;
 </script>
 
 <div class="form-control">
-  <label for={label}>{label}</label>
-  {#if type === 'textarea'}
-    <!-- content here -->
-    <textarea rows="3" {id} {value} on:input />
+  <label for={id}>{label}</label>
+  {#if controlType === 'textarea'}
+    <textarea {rows} {id} {value} on:input />
   {:else}
-    <!-- else content here -->
     <input {type} {id} {value} on:input />
   {/if}
 </div>

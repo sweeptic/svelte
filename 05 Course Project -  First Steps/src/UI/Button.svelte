@@ -1,5 +1,4 @@
 <script>
-  // your script goes here
   export let type;
   export let caption;
   export let href;
@@ -7,10 +6,8 @@
 </script>
 
 {#if href}
-  <!-- content here -->
   <a {href}>{caption}</a>
 {:else}
-  <!-- else content here -->
   <button class={mode} {type}>{caption}</button>
 {/if}
 

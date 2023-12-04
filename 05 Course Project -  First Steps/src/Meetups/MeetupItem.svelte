@@ -1,24 +1,30 @@
 <script>
-  import Button from './../UI/Button.svelte';
-  export let meetup;
+  import Button from '../UI/Button.svelte';
+
+  export let title;
+  export let subtitle;
+  export let imageUrl;
+  export let description;
+  export let address;
+  export let email;
 </script>
 
 <article>
   <header>
-    <h1>{meetup.title}</h1>
-    <h2>{meetup.subtitle}</h2>
-    <p>{meetup.address}</p>
+    <h1>{title}</h1>
+    <h2>{subtitle}</h2>
+    <p>{address}</p>
   </header>
   <div class="image">
-    <img src={meetup.imageUrl} alt={meetup.title} />
+    <img src={imageUrl} alt={title} />
   </div>
   <div class="content">
-    <p>{meetup.description}</p>
+    <p>{description}</p>
   </div>
   <footer>
-    <Button href="mailto:{meetup.email}" caption="Contact" />
-    <Button mode="outline" caption="Show Details" type="button" />
-    <Button caption="Favorite" type="button" />
+    <Button href="mailto:{email}" caption="Contact" />
+    <Button mode="outline" type="button" caption="Favorite" />
+    <Button type="button" caption="Show Details" />
   </footer>
 </article>
 
@@ -28,9 +34,6 @@
     border-radius: 5px;
     background: white;
     margin: 1rem;
-    position: relative;
-    top: 60px;
-    background-color: rgb(205, 253, 205);
   }
 
   header,
@@ -76,5 +79,9 @@
 
   div {
     text-align: right;
+  }
+
+  .content {
+    height: 4rem;
   }
 </style>
