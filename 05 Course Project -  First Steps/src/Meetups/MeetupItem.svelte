@@ -1,13 +1,18 @@
+<script>
+  export let meetup;
+</script>
+
 <article>
   <header>
-    <h1>TITLE</h1>
-    <h2>SUBTITLE</h2>
+    <h1>{meetup.title}</h1>
+    <h2>{meetup.subtitle}</h2>
+    <p>{meetup.address}</p>
   </header>
   <div class="image">
-    <img src="" alt="" />
+    <img src={meetup.imageUrl} alt={meetup.title} />
   </div>
   <div class="content">
-    <p></p>
+    <p>{meetup.description}</p>
   </div>
   <footer>
     <button>Show Details</button>

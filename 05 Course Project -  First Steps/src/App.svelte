@@ -6,6 +6,6 @@
 
 <Header />
 
-{#each meetups as meetup}
-  <MeetupItem />
+{#each meetups as meetup, i (meetup.id)}
+  <MeetupItem {meetup} />
 {/each}

@@ -46,12 +46,6 @@ var app = (function () {
             node.parentNode.removeChild(node);
         }
     }
-    function destroy_each(iterations, detaching) {
-        for (let i = 0; i < iterations.length; i += 1) {
-            if (iterations[i])
-                iterations[i].d(detaching);
-        }
-    }
     function element(name) {
         return document.createElement(name);
     }
@@ -191,6 +185,19 @@ var app = (function () {
     }
     const outroing = new Set();
     let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
@@ -214,6 +221,99 @@ var app = (function () {
         }
         else if (callback) {
             callback();
+        }
+    }
+    function outro_and_destroy_block(block, lookup) {
+        transition_out(block, 1, 1, () => {
+            lookup.delete(block.key);
+        });
+    }
+    function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
+        let o = old_blocks.length;
+        let n = list.length;
+        let i = o;
+        const old_indexes = {};
+        while (i--)
+            old_indexes[old_blocks[i].key] = i;
+        const new_blocks = [];
+        const new_lookup = new Map();
+        const deltas = new Map();
+        const updates = [];
+        i = n;
+        while (i--) {
+            const child_ctx = get_context(ctx, list, i);
+            const key = get_key(child_ctx);
+            let block = lookup.get(key);
+            if (!block) {
+                block = create_each_block(key, child_ctx);
+                block.c();
+            }
+            else if (dynamic) {
+                // defer updates until all the DOM shuffling is done
+                updates.push(() => block.p(child_ctx, dirty));
+            }
+            new_lookup.set(key, new_blocks[i] = block);
+            if (key in old_indexes)
+                deltas.set(key, Math.abs(i - old_indexes[key]));
+        }
+        const will_move = new Set();
+        const did_move = new Set();
+        function insert(block) {
+            transition_in(block, 1);
+            block.m(node, next);
+            lookup.set(block.key, block);
+            next = block.first;
+            n--;
+        }
+        while (o && n) {
+            const new_block = new_blocks[n - 1];
+            const old_block = old_blocks[o - 1];
+            const new_key = new_block.key;
+            const old_key = old_block.key;
+            if (new_block === old_block) {
+                // do nothing
+                next = new_block.first;
+                o--;
+                n--;
+            }
+            else if (!new_lookup.has(old_key)) {
+                // remove old block
+                destroy(old_block, lookup);
+                o--;
+            }
+            else if (!lookup.has(new_key) || will_move.has(new_key)) {
+                insert(new_block);
+            }
+            else if (did_move.has(old_key)) {
+                o--;
+            }
+            else if (deltas.get(new_key) > deltas.get(old_key)) {
+                did_move.add(new_key);
+                insert(new_block);
+            }
+            else {
+                will_move.add(old_key);
+                o--;
+            }
+        }
+        while (o--) {
+            const old_block = old_blocks[o];
+            if (!new_lookup.has(old_block.key))
+                destroy(old_block, lookup);
+        }
+        while (n)
+            insert(new_blocks[n - 1]);
+        run_all(updates);
+        return new_blocks;
+    }
+    function validate_each_keys(ctx, list, get_context, get_key) {
+        const keys = new Set();
+        for (let i = 0; i < list.length; i++) {
+            const key = get_key(get_context(ctx, list, i));
+            if (keys.has(key)) {
+                throw new Error('Cannot have duplicate keys in a keyed each');
+            }
+            keys.add(key);
         }
     }
     function create_component(block) {
@@ -374,6 +474,13 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
+    function set_data_dev(text, data) {
+        data = '' + data;
+        if (text.data === data)
+            return;
+        dispatch_dev('SvelteDOMSetData', { node: text, data });
+        text.data = data;
+    }
     function validate_each_argument(arg) {
         if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
             let msg = '{#each} only iterates over array-like objects.';
@@ -418,19 +525,30 @@ var app = (function () {
     	let article;
     	let header;
     	let h1;
+    	let t0_value = /*meetup*/ ctx[0].title + "";
+    	let t0;
     	let t1;
     	let h2;
+    	let t2_value = /*meetup*/ ctx[0].subtitle + "";
+    	let t2;
     	let t3;
+    	let p0;
+    	let t4_value = /*meetup*/ ctx[0].address + "";
+    	let t4;
+    	let t5;
     	let div0;
     	let img;
     	let img_src_value;
-    	let t4;
+    	let img_alt_value;
+    	let t6;
     	let div1;
-    	let p;
-    	let t5;
+    	let p1;
+    	let t7_value = /*meetup*/ ctx[0].description + "";
+    	let t7;
+    	let t8;
     	let footer;
     	let button0;
-    	let t7;
+    	let t10;
     	let button1;
 
     	const block = {
@@ -438,45 +556,51 @@ var app = (function () {
     			article = element("article");
     			header = element("header");
     			h1 = element("h1");
-    			h1.textContent = "TITLE";
+    			t0 = text(t0_value);
     			t1 = space();
     			h2 = element("h2");
-    			h2.textContent = "SUBTITLE";
+    			t2 = text(t2_value);
     			t3 = space();
+    			p0 = element("p");
+    			t4 = text(t4_value);
+    			t5 = space();
     			div0 = element("div");
     			img = element("img");
-    			t4 = space();
+    			t6 = space();
     			div1 = element("div");
-    			p = element("p");
-    			t5 = space();
+    			p1 = element("p");
+    			t7 = text(t7_value);
+    			t8 = space();
     			footer = element("footer");
     			button0 = element("button");
     			button0.textContent = "Show Details";
-    			t7 = space();
+    			t10 = space();
     			button1 = element("button");
     			button1.textContent = "Favorite";
     			attr_dev(h1, "class", "svelte-187tz39");
-    			add_location(h1, file$1, 2, 4, 25);
+    			add_location(h1, file$1, 6, 4, 66);
     			attr_dev(h2, "class", "svelte-187tz39");
-    			add_location(h2, file$1, 3, 4, 44);
+    			add_location(h2, file$1, 7, 4, 94);
+    			attr_dev(p0, "class", "svelte-187tz39");
+    			add_location(p0, file$1, 8, 4, 125);
     			attr_dev(header, "class", "svelte-187tz39");
-    			add_location(header, file$1, 1, 2, 12);
-    			if (!src_url_equal(img.src, img_src_value = "")) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "alt", "");
+    			add_location(header, file$1, 5, 2, 53);
+    			if (!src_url_equal(img.src, img_src_value = /*meetup*/ ctx[0].imageUrl)) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", img_alt_value = /*meetup*/ ctx[0].title);
     			attr_dev(img, "class", "svelte-187tz39");
-    			add_location(img, file$1, 6, 4, 100);
+    			add_location(img, file$1, 11, 4, 187);
     			attr_dev(div0, "class", "image svelte-187tz39");
-    			add_location(div0, file$1, 5, 2, 76);
-    			attr_dev(p, "class", "svelte-187tz39");
-    			add_location(p, file$1, 9, 4, 159);
+    			add_location(div0, file$1, 10, 2, 163);
+    			attr_dev(p1, "class", "svelte-187tz39");
+    			add_location(p1, file$1, 14, 4, 273);
     			attr_dev(div1, "class", "content svelte-187tz39");
-    			add_location(div1, file$1, 8, 2, 133);
-    			add_location(button0, file$1, 12, 4, 191);
-    			add_location(button1, file$1, 13, 4, 225);
+    			add_location(div1, file$1, 13, 2, 247);
+    			add_location(button0, file$1, 17, 4, 325);
+    			add_location(button1, file$1, 18, 4, 359);
     			attr_dev(footer, "class", "svelte-187tz39");
-    			add_location(footer, file$1, 11, 2, 178);
+    			add_location(footer, file$1, 16, 2, 312);
     			attr_dev(article, "class", "svelte-187tz39");
-    			add_location(article, file$1, 0, 0, 0);
+    			add_location(article, file$1, 4, 0, 41);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -485,21 +609,41 @@ var app = (function () {
     			insert_dev(target, article, anchor);
     			append_dev(article, header);
     			append_dev(header, h1);
+    			append_dev(h1, t0);
     			append_dev(header, t1);
     			append_dev(header, h2);
-    			append_dev(article, t3);
+    			append_dev(h2, t2);
+    			append_dev(header, t3);
+    			append_dev(header, p0);
+    			append_dev(p0, t4);
+    			append_dev(article, t5);
     			append_dev(article, div0);
     			append_dev(div0, img);
-    			append_dev(article, t4);
+    			append_dev(article, t6);
     			append_dev(article, div1);
-    			append_dev(div1, p);
-    			append_dev(article, t5);
+    			append_dev(div1, p1);
+    			append_dev(p1, t7);
+    			append_dev(article, t8);
     			append_dev(article, footer);
     			append_dev(footer, button0);
-    			append_dev(footer, t7);
+    			append_dev(footer, t10);
     			append_dev(footer, button1);
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*meetup*/ 1 && t0_value !== (t0_value = /*meetup*/ ctx[0].title + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*meetup*/ 1 && t2_value !== (t2_value = /*meetup*/ ctx[0].subtitle + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*meetup*/ 1 && t4_value !== (t4_value = /*meetup*/ ctx[0].address + "")) set_data_dev(t4, t4_value);
+
+    			if (dirty & /*meetup*/ 1 && !src_url_equal(img.src, img_src_value = /*meetup*/ ctx[0].imageUrl)) {
+    				attr_dev(img, "src", img_src_value);
+    			}
+
+    			if (dirty & /*meetup*/ 1 && img_alt_value !== (img_alt_value = /*meetup*/ ctx[0].title)) {
+    				attr_dev(img, "alt", img_alt_value);
+    			}
+
+    			if (dirty & /*meetup*/ 1 && t7_value !== (t7_value = /*meetup*/ ctx[0].description + "")) set_data_dev(t7, t7_value);
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
@@ -518,22 +662,44 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props) {
+    function instance$2($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('MeetupItem', slots, []);
-    	const writable_props = [];
+    	let { meetup } = $$props;
+
+    	$$self.$$.on_mount.push(function () {
+    		if (meetup === undefined && !('meetup' in $$props || $$self.$$.bound[$$self.$$.props['meetup']])) {
+    			console.warn("<MeetupItem> was created without expected prop 'meetup'");
+    		}
+    	});
+
+    	const writable_props = ['meetup'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<MeetupItem> was created with unknown prop '${key}'`);
     	});
 
-    	return [];
+    	$$self.$$set = $$props => {
+    		if ('meetup' in $$props) $$invalidate(0, meetup = $$props.meetup);
+    	};
+
+    	$$self.$capture_state = () => ({ meetup });
+
+    	$$self.$inject_state = $$props => {
+    		if ('meetup' in $$props) $$invalidate(0, meetup = $$props.meetup);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [meetup];
     }
 
     class MeetupItem extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { meetup: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -541,6 +707,14 @@ var app = (function () {
     			options,
     			id: create_fragment$2.name
     		});
+    	}
+
+    	get meetup() {
+    		throw new Error("<MeetupItem>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set meetup(value) {
+    		throw new Error("<MeetupItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -643,22 +817,36 @@ var app = (function () {
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[0] = list[i];
+    	child_ctx[2] = i;
     	return child_ctx;
     }
 
-    // (9:0) {#each meetups as meetup}
-    function create_each_block(ctx) {
+    // (9:0) {#each meetups as meetup, i (meetup.id)}
+    function create_each_block(key_1, ctx) {
+    	let first;
     	let meetupitem;
     	let current;
-    	meetupitem = new MeetupItem({ $$inline: true });
+
+    	meetupitem = new MeetupItem({
+    			props: { meetup: /*meetup*/ ctx[0] },
+    			$$inline: true
+    		});
 
     	const block = {
+    		key: key_1,
+    		first: null,
     		c: function create() {
+    			first = empty();
     			create_component(meetupitem.$$.fragment);
+    			this.first = first;
     		},
     		m: function mount(target, anchor) {
+    			insert_dev(target, first, anchor);
     			mount_component(meetupitem, target, anchor);
     			current = true;
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -670,6 +858,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			if (detaching) detach_dev(first);
     			destroy_component(meetupitem, detaching);
     		}
     	};
@@ -678,7 +867,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(9:0) {#each meetups as meetup}",
+    		source: "(9:0) {#each meetups as meetup, i (meetup.id)}",
     		ctx
     	});
 
@@ -688,15 +877,20 @@ var app = (function () {
     function create_fragment(ctx) {
     	let header;
     	let t;
+    	let each_blocks = [];
+    	let each_1_lookup = new Map();
     	let each_1_anchor;
     	let current;
     	header = new Header({ $$inline: true });
     	let each_value = data;
     	validate_each_argument(each_value);
-    	let each_blocks = [];
+    	const get_key = ctx => /*meetup*/ ctx[0].id;
+    	validate_each_keys(ctx, each_value, get_each_context, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    		let child_ctx = get_each_context(ctx, each_value, i);
+    		let key = get_key(child_ctx);
+    		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
     	}
 
     	const block = {
@@ -726,7 +920,16 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*meetups*/ 0) {
+    				each_value = data;
+    				validate_each_argument(each_value);
+    				group_outros();
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, outro_and_destroy_block, create_each_block, each_1_anchor, get_each_context);
+    				check_outros();
+    			}
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(header.$$.fragment, local);
@@ -739,7 +942,6 @@ var app = (function () {
     		},
     		o: function outro(local) {
     			transition_out(header.$$.fragment, local);
-    			each_blocks = each_blocks.filter(Boolean);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				transition_out(each_blocks[i]);
@@ -750,7 +952,11 @@ var app = (function () {
     		d: function destroy(detaching) {
     			destroy_component(header, detaching);
     			if (detaching) detach_dev(t);
-    			destroy_each(each_blocks, detaching);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d(detaching);
+    			}
+
     			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
