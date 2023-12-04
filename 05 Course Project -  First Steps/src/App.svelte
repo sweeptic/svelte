@@ -1,9 +1,11 @@
 <script>
+  import MeetupItem from './Meetups/MeetupItem.svelte';
   import Header from './UI/Header.svelte';
-  import someData from './data/data';
-
-  const meetups = someData;
-  console.log('someData', someData);
+  import meetups from './data/data';
 </script>
 
 <Header />
+
+{#each meetups as meetup}
+  <MeetupItem />
+{/each}
