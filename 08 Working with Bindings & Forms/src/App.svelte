@@ -7,6 +7,8 @@
   let agreed;
   let color = 'red';
   let colorOptions = '';
+  let usernameInput;
+  let someDiv;
 
   $: console.log(value);
   $: console.log(selectedOption);
@@ -17,6 +19,11 @@
 
   function setValue(event) {
     value = event.target.value;
+  }
+
+  function saveData() {
+    console.log(usernameInput.value);
+    console.log(someDiv);
   }
 </script>
 
@@ -77,3 +84,10 @@
   <option value="red">Red</option>
   <option value="blue">Blue</option>
 </select>
+
+<hr />
+
+<input type="text" bind:this={usernameInput} />
+<button on:click={saveData}>Save</button>
+
+<div bind:this={someDiv}>someDiv</div>

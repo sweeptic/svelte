@@ -765,13 +765,21 @@ var app = (function () {
     	let option0;
     	let option1;
     	let option2;
+    	let t27;
+    	let hr;
+    	let t28;
+    	let input9;
+    	let t29;
+    	let button;
+    	let t31;
+    	let div;
     	let current;
     	let binding_group;
     	let mounted;
     	let dispose;
 
     	function custominput_val_binding(value) {
-    		/*custominput_val_binding*/ ctx[6](value);
+    		/*custominput_val_binding*/ ctx[9](value);
     	}
 
     	let custominput_props = {};
@@ -784,7 +792,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(custominput, 'val', custominput_val_binding));
 
     	function toggle_chosenOption_binding(value) {
-    		/*toggle_chosenOption_binding*/ ctx[7](value);
+    		/*toggle_chosenOption_binding*/ ctx[10](value);
     	}
 
     	let toggle_props = {};
@@ -795,7 +803,7 @@ var app = (function () {
 
     	toggle = new Toggle({ props: toggle_props, $$inline: true });
     	binding_callbacks.push(() => bind(toggle, 'chosenOption', toggle_chosenOption_binding));
-    	binding_group = init_binding_group(/*$$binding_groups*/ ctx[12][0]);
+    	binding_group = init_binding_group(/*$$binding_groups*/ ctx[15][0]);
 
     	const block = {
     		c: function create() {
@@ -851,66 +859,81 @@ var app = (function () {
     			option1.textContent = "Red";
     			option2 = element("option");
     			option2.textContent = "Blue";
-    			add_location(h10, file, 30, 0, 701);
+    			t27 = space();
+    			hr = element("hr");
+    			t28 = space();
+    			input9 = element("input");
+    			t29 = space();
+    			button = element("button");
+    			button.textContent = "Save";
+    			t31 = space();
+    			div = element("div");
+    			div.textContent = "someDiv";
+    			add_location(h10, file, 37, 0, 830);
     			attr_dev(input0, "type", "number");
     			input0.value = /*price*/ ctx[2];
-    			add_location(input0, file, 32, 0, 728);
+    			add_location(input0, file, 39, 0, 857);
     			attr_dev(input1, "type", "number");
-    			add_location(input1, file, 39, 0, 854);
+    			add_location(input1, file, 46, 0, 983);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "name", "");
     			attr_dev(input2, "id", "");
-    			add_location(input2, file, 42, 2, 908);
-    			add_location(label0, file, 41, 0, 898);
-    			add_location(h11, file, 46, 0, 998);
+    			add_location(input2, file, 49, 2, 1037);
+    			add_location(label0, file, 48, 0, 1027);
+    			add_location(h11, file, 53, 0, 1127);
     			attr_dev(input3, "type", "radio");
     			attr_dev(input3, "name", "color");
     			input3.__value = "red";
     			input3.value = input3.__value;
-    			add_location(input3, file, 48, 2, 1032);
-    			add_location(label1, file, 47, 0, 1022);
+    			add_location(input3, file, 55, 2, 1161);
+    			add_location(label1, file, 54, 0, 1151);
     			attr_dev(input4, "type", "radio");
     			attr_dev(input4, "name", "color");
     			input4.__value = "green";
     			input4.value = input4.__value;
-    			add_location(input4, file, 52, 2, 1124);
-    			add_location(label2, file, 51, 0, 1114);
+    			add_location(input4, file, 59, 2, 1253);
+    			add_location(label2, file, 58, 0, 1243);
     			attr_dev(input5, "type", "radio");
     			attr_dev(input5, "name", "color");
     			input5.__value = "blue";
     			input5.value = input5.__value;
-    			add_location(input5, file, 56, 2, 1220);
-    			add_location(label3, file, 55, 0, 1210);
-    			add_location(h12, file, 60, 0, 1305);
+    			add_location(input5, file, 63, 2, 1349);
+    			add_location(label3, file, 62, 0, 1339);
+    			add_location(h12, file, 67, 0, 1434);
     			attr_dev(input6, "type", "checkbox");
     			attr_dev(input6, "name", "color");
     			input6.__value = "red";
     			input6.value = input6.__value;
-    			add_location(input6, file, 62, 2, 1339);
-    			add_location(label4, file, 61, 0, 1329);
+    			add_location(input6, file, 69, 2, 1468);
+    			add_location(label4, file, 68, 0, 1458);
     			attr_dev(input7, "type", "checkbox");
     			attr_dev(input7, "name", "color");
     			input7.__value = "green";
     			input7.value = input7.__value;
-    			add_location(input7, file, 66, 2, 1434);
-    			add_location(label5, file, 65, 0, 1424);
+    			add_location(input7, file, 73, 2, 1563);
+    			add_location(label5, file, 72, 0, 1553);
     			attr_dev(input8, "type", "checkbox");
     			attr_dev(input8, "name", "color");
     			input8.__value = "blue";
     			input8.value = input8.__value;
-    			add_location(input8, file, 70, 2, 1533);
-    			add_location(label6, file, 69, 0, 1523);
+    			add_location(input8, file, 77, 2, 1662);
+    			add_location(label6, file, 76, 0, 1652);
     			option0.__value = "green";
     			option0.value = option0.__value;
-    			add_location(option0, file, 75, 2, 1658);
+    			add_location(option0, file, 82, 2, 1787);
     			option1.__value = "red";
     			option1.value = option1.__value;
-    			add_location(option1, file, 76, 2, 1697);
+    			add_location(option1, file, 83, 2, 1826);
     			option2.__value = "blue";
     			option2.value = option2.__value;
-    			add_location(option2, file, 77, 2, 1732);
-    			if (/*colorOptions*/ ctx[5] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[18].call(select));
-    			add_location(select, file, 74, 0, 1621);
+    			add_location(option2, file, 84, 2, 1861);
+    			if (/*colorOptions*/ ctx[5] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[21].call(select));
+    			add_location(select, file, 81, 0, 1750);
+    			add_location(hr, file, 87, 0, 1907);
+    			attr_dev(input9, "type", "text");
+    			add_location(input9, file, 89, 0, 1915);
+    			add_location(button, file, 90, 0, 1963);
+    			add_location(div, file, 92, 0, 2006);
     			binding_group.p(input3, input4, input5, input6, input7, input8);
     		},
     		l: function claim(nodes) {
@@ -972,20 +995,31 @@ var app = (function () {
     			append_dev(select, option1);
     			append_dev(select, option2);
     			select_option(select, /*colorOptions*/ ctx[5], true);
+    			insert_dev(target, t27, anchor);
+    			insert_dev(target, hr, anchor);
+    			insert_dev(target, t28, anchor);
+    			insert_dev(target, input9, anchor);
+    			/*input9_binding*/ ctx[22](input9);
+    			insert_dev(target, t29, anchor);
+    			insert_dev(target, button, anchor);
+    			insert_dev(target, t31, anchor);
+    			insert_dev(target, div, anchor);
+    			/*div_binding*/ ctx[23](div);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input_handler*/ ctx[8], false, false, false, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[9]),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[10]),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[11]),
-    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[13]),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[14]),
-    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[15]),
-    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[16]),
-    					listen_dev(input8, "change", /*input8_change_handler*/ ctx[17]),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[18])
+    					listen_dev(input0, "input", /*input_handler*/ ctx[11], false, false, false, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[12]),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[13]),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[14]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[16]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[17]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[18]),
+    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[19]),
+    					listen_dev(input8, "change", /*input8_change_handler*/ ctx[20]),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[21]),
+    					listen_dev(button, "click", /*saveData*/ ctx[8], false, false, false, false)
     				];
 
     				mounted = true;
@@ -1092,6 +1126,16 @@ var app = (function () {
     			if (detaching) detach_dev(label6);
     			if (detaching) detach_dev(t23);
     			if (detaching) detach_dev(select);
+    			if (detaching) detach_dev(t27);
+    			if (detaching) detach_dev(hr);
+    			if (detaching) detach_dev(t28);
+    			if (detaching) detach_dev(input9);
+    			/*input9_binding*/ ctx[22](null);
+    			if (detaching) detach_dev(t29);
+    			if (detaching) detach_dev(button);
+    			if (detaching) detach_dev(t31);
+    			if (detaching) detach_dev(div);
+    			/*div_binding*/ ctx[23](null);
     			binding_group.r();
     			mounted = false;
     			run_all(dispose);
@@ -1118,9 +1162,16 @@ var app = (function () {
     	let agreed;
     	let color = 'red';
     	let colorOptions = '';
+    	let usernameInput;
+    	let someDiv;
 
     	function setValue(event) {
     		$$invalidate(0, value = event.target.value);
+    	}
+
+    	function saveData() {
+    		console.log(usernameInput.value);
+    		console.log(someDiv);
     	}
 
     	const writable_props = [];
@@ -1188,6 +1239,20 @@ var app = (function () {
     		$$invalidate(5, colorOptions);
     	}
 
+    	function input9_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			usernameInput = $$value;
+    			$$invalidate(6, usernameInput);
+    		});
+    	}
+
+    	function div_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			someDiv = $$value;
+    			$$invalidate(7, someDiv);
+    		});
+    	}
+
     	$$self.$capture_state = () => ({
     		CustomInput,
     		Toggle,
@@ -1197,7 +1262,10 @@ var app = (function () {
     		agreed,
     		color,
     		colorOptions,
-    		setValue
+    		usernameInput,
+    		someDiv,
+    		setValue,
+    		saveData
     	});
 
     	$$self.$inject_state = $$props => {
@@ -1207,6 +1275,8 @@ var app = (function () {
     		if ('agreed' in $$props) $$invalidate(3, agreed = $$props.agreed);
     		if ('color' in $$props) $$invalidate(4, color = $$props.color);
     		if ('colorOptions' in $$props) $$invalidate(5, colorOptions = $$props.colorOptions);
+    		if ('usernameInput' in $$props) $$invalidate(6, usernameInput = $$props.usernameInput);
+    		if ('someDiv' in $$props) $$invalidate(7, someDiv = $$props.someDiv);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1246,6 +1316,9 @@ var app = (function () {
     		agreed,
     		color,
     		colorOptions,
+    		usernameInput,
+    		someDiv,
+    		saveData,
     		custominput_val_binding,
     		toggle_chosenOption_binding,
     		input_handler,
@@ -1258,7 +1331,9 @@ var app = (function () {
     		input6_change_handler,
     		input7_change_handler,
     		input8_change_handler,
-    		select_change_handler
+    		select_change_handler,
+    		input9_binding,
+    		div_binding
     	];
     }
 
