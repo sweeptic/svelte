@@ -5,12 +5,13 @@
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher } from 'svelte';
 
-  let title = '';
-  let subtitle = '';
-  let address = '';
-  let email = '';
-  let description = '';
-  let imageUrl = '';
+  let title = 'default title';
+  let subtitle = 'default subtitle';
+  let address = 'default address';
+  let email = 'default@email.com';
+  let description = 'default description';
+  let imageUrl =
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg';
 
   const dispatch = createEventDispatcher();
 
@@ -23,6 +24,10 @@
       description,
       imageUrl,
     });
+  }
+
+  function onCancel() {
+    dispatch('cancel');
   }
 </script>
 
@@ -66,7 +71,10 @@
       value={description}
       on:input={(event) => (description = event.target.value)}
     />
-    <!-- <Button type="submit">Save</Button> -->
+    <Button type="submit" mode="outline" on:click={onCancel} slot="footer"
+      >Cancel</Button
+    >
+    <Button type="submit" slot="footer">Save</Button>
   </form>
 </Modal>
 
