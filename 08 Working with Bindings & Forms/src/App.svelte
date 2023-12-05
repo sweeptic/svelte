@@ -6,12 +6,14 @@
   let price = 0;
   let agreed;
   let color = 'red';
+  let colorOptions = '';
 
   $: console.log(value);
   $: console.log(selectedOption);
   $: console.log(price);
   $: console.log(agreed);
   $: console.log(color);
+  $: console.log(colorOptions);
 
   function setValue(event) {
     value = event.target.value;
@@ -69,3 +71,9 @@
   <input type="checkbox" name="color" value="blue" bind:group={color} />
   Blue
 </label>
+
+<select bind:value={colorOptions}>
+  <option value="green">Green</option>
+  <option value="red">Red</option>
+  <option value="blue">Blue</option>
+</select>
