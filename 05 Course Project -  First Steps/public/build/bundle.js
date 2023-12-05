@@ -559,7 +559,7 @@ var app = (function () {
     			t = text(/*caption*/ ctx[1]);
     			attr_dev(button, "class", button_class_value = "" + (null_to_empty(/*mode*/ ctx[3]) + " svelte-g32zaw"));
     			attr_dev(button, "type", /*type*/ ctx[0]);
-    			add_location(button, file$4, 10, 2, 146);
+    			add_location(button, file$4, 10, 2, 171);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -603,7 +603,7 @@ var app = (function () {
     			t = text(/*caption*/ ctx[1]);
     			attr_dev(a, "href", /*href*/ ctx[2]);
     			attr_dev(a, "class", "svelte-g32zaw");
-    			add_location(a, file$4, 8, 2, 112);
+    			add_location(a, file$4, 8, 2, 137);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, a, anchor);
@@ -690,26 +690,14 @@ var app = (function () {
     function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Button', slots, []);
-    	let { type } = $$props;
+    	let { type = 'button' } = $$props;
     	let { caption } = $$props;
-    	let { href } = $$props;
-    	let { mode } = $$props;
+    	let { href = null } = $$props;
+    	let { mode = null } = $$props;
 
     	$$self.$$.on_mount.push(function () {
-    		if (type === undefined && !('type' in $$props || $$self.$$.bound[$$self.$$.props['type']])) {
-    			console.warn("<Button> was created without expected prop 'type'");
-    		}
-
     		if (caption === undefined && !('caption' in $$props || $$self.$$.bound[$$self.$$.props['caption']])) {
     			console.warn("<Button> was created without expected prop 'caption'");
-    		}
-
-    		if (href === undefined && !('href' in $$props || $$self.$$.bound[$$self.$$.props['href']])) {
-    			console.warn("<Button> was created without expected prop 'href'");
-    		}
-
-    		if (mode === undefined && !('mode' in $$props || $$self.$$.bound[$$self.$$.props['mode']])) {
-    			console.warn("<Button> was created without expected prop 'mode'");
     		}
     	});
 
@@ -1364,7 +1352,7 @@ var app = (function () {
     			attr_dev(input, "id", /*id*/ ctx[1]);
     			input.value = /*value*/ ctx[4];
     			attr_dev(input, "class", "svelte-xzzzlr");
-    			add_location(input, file$1, 14, 4, 297);
+    			add_location(input, file$1, 14, 4, 320);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
@@ -1418,7 +1406,7 @@ var app = (function () {
     			attr_dev(textarea, "id", /*id*/ ctx[1]);
     			textarea.value = /*value*/ ctx[4];
     			attr_dev(textarea, "class", "svelte-xzzzlr");
-    			add_location(textarea, file$1, 12, 4, 241);
+    			add_location(textarea, file$1, 12, 4, 264);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, textarea, anchor);
@@ -1482,9 +1470,9 @@ var app = (function () {
     			if_block.c();
     			attr_dev(label_1, "for", /*id*/ ctx[1]);
     			attr_dev(label_1, "class", "svelte-xzzzlr");
-    			add_location(label_1, file$1, 10, 2, 170);
+    			add_location(label_1, file$1, 10, 2, 193);
     			attr_dev(div, "class", "form-control svelte-xzzzlr");
-    			add_location(div, file$1, 9, 0, 141);
+    			add_location(div, file$1, 9, 0, 164);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1537,18 +1525,14 @@ var app = (function () {
     function instance$1($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('TextInput', slots, []);
-    	let { controlType } = $$props;
+    	let { controlType = null } = $$props;
     	let { id } = $$props;
     	let { label } = $$props;
-    	let { rows } = $$props;
+    	let { rows = null } = $$props;
     	let { value } = $$props;
-    	let { type } = $$props;
+    	let { type = 'text' } = $$props;
 
     	$$self.$$.on_mount.push(function () {
-    		if (controlType === undefined && !('controlType' in $$props || $$self.$$.bound[$$self.$$.props['controlType']])) {
-    			console.warn("<TextInput> was created without expected prop 'controlType'");
-    		}
-
     		if (id === undefined && !('id' in $$props || $$self.$$.bound[$$self.$$.props['id']])) {
     			console.warn("<TextInput> was created without expected prop 'id'");
     		}
@@ -1557,16 +1541,8 @@ var app = (function () {
     			console.warn("<TextInput> was created without expected prop 'label'");
     		}
 
-    		if (rows === undefined && !('rows' in $$props || $$self.$$.bound[$$self.$$.props['rows']])) {
-    			console.warn("<TextInput> was created without expected prop 'rows'");
-    		}
-
     		if (value === undefined && !('value' in $$props || $$self.$$.bound[$$self.$$.props['value']])) {
     			console.warn("<TextInput> was created without expected prop 'value'");
-    		}
-
-    		if (type === undefined && !('type' in $$props || $$self.$$.bound[$$self.$$.props['type']])) {
-    			console.warn("<TextInput> was created without expected prop 'type'");
     		}
     	});
 
@@ -1720,7 +1696,6 @@ var app = (function () {
     			props: {
     				id: "title",
     				label: "Title",
-    				type: "text",
     				value: /*title*/ ctx[0]
     			},
     			$$inline: true
@@ -1732,7 +1707,6 @@ var app = (function () {
     			props: {
     				id: "subtitle",
     				label: "Subtitle",
-    				type: "text",
     				value: /*subtitle*/ ctx[1]
     			},
     			$$inline: true
@@ -1744,7 +1718,6 @@ var app = (function () {
     			props: {
     				id: "address",
     				label: "Address",
-    				type: "text",
     				value: /*address*/ ctx[2]
     			},
     			$$inline: true
@@ -1756,7 +1729,6 @@ var app = (function () {
     			props: {
     				id: "imageUrl",
     				label: "Image URL",
-    				type: "text",
     				value: /*imageUrl*/ ctx[5]
     			},
     			$$inline: true
@@ -1820,9 +1792,9 @@ var app = (function () {
     			t7 = space();
     			create_component(meetupgrid.$$.fragment);
     			attr_dev(form, "class", "svelte-14fgpj0");
-    			add_location(form, file, 68, 2, 1789);
+    			add_location(form, file, 56, 2, 1670);
     			attr_dev(main, "class", "svelte-14fgpj0");
-    			add_location(main, file, 67, 0, 1780);
+    			add_location(main, file, 55, 0, 1661);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1933,31 +1905,31 @@ var app = (function () {
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
-    	let title = "";
-    	let subtitle = "";
-    	let address = "";
-    	let email = "";
-    	let description = "";
-    	let imageUrl = "";
+    	let title = '';
+    	let subtitle = '';
+    	let address = '';
+    	let email = '';
+    	let description = '';
+    	let imageUrl = '';
 
     	let meetups = [
     		{
-    			id: "m1",
-    			title: "Coding Bootcamp",
-    			subtitle: "Learn to code in 2 hours",
-    			description: "In this meetup, we will have some experts that teach you how to code!",
-    			imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG",
-    			address: "27th Nerd Road, 32523 New York",
-    			contactEmail: "code@test.com"
+    			id: 'm1',
+    			title: 'Coding Bootcamp',
+    			subtitle: 'Learn to code in 2 hours',
+    			description: 'In this meetup, we will have some experts that teach you how to code!',
+    			imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG/800px-Caffe_Nero_coffee_bar%2C_High_St%2C_Sutton%2C_Surrey%2C_Greater_London.JPG',
+    			address: '27th Nerd Road, 32523 New York',
+    			contactEmail: 'code@test.com'
     		},
     		{
-    			id: "m2",
-    			title: "Swim Together",
+    			id: 'm2',
+    			title: 'Swim Together',
     			subtitle: "Let's go for some swimming",
-    			description: "We will simply swim some rounds!",
-    			imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg",
-    			address: "27th Nerd Road, 32523 New York",
-    			contactEmail: "swim@test.com"
+    			description: 'We will simply swim some rounds!',
+    			imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg',
+    			address: '27th Nerd Road, 32523 New York',
+    			contactEmail: 'swim@test.com'
     		}
     	];
 
