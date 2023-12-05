@@ -63,6 +63,9 @@ var app = (function () {
         else if (node.getAttribute(attribute) !== value)
             node.setAttribute(attribute, value);
     }
+    function to_number(value) {
+        return value === '' ? null : +value;
+    }
     function children(element) {
         return Array.from(element.childNodes);
     }
@@ -682,10 +685,16 @@ var app = (function () {
     	let updating_chosenOption;
     	let t1;
     	let h1;
+    	let t3;
+    	let input0;
+    	let t4;
+    	let input1;
     	let current;
+    	let mounted;
+    	let dispose;
 
     	function custominput_val_binding(value) {
-    		/*custominput_val_binding*/ ctx[2](value);
+    		/*custominput_val_binding*/ ctx[3](value);
     	}
 
     	let custominput_props = {};
@@ -698,7 +707,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(custominput, 'val', custominput_val_binding));
 
     	function toggle_chosenOption_binding(value) {
-    		/*toggle_chosenOption_binding*/ ctx[3](value);
+    		/*toggle_chosenOption_binding*/ ctx[4](value);
     	}
 
     	let toggle_props = {};
@@ -718,7 +727,16 @@ var app = (function () {
     			t1 = space();
     			h1 = element("h1");
     			h1.textContent = "Bindings & Forms";
-    			add_location(h1, file, 22, 0, 516);
+    			t3 = space();
+    			input0 = element("input");
+    			t4 = space();
+    			input1 = element("input");
+    			add_location(h1, file, 24, 0, 558);
+    			attr_dev(input0, "type", "number");
+    			input0.value = /*price*/ ctx[2];
+    			add_location(input0, file, 26, 0, 585);
+    			attr_dev(input1, "type", "number");
+    			add_location(input1, file, 33, 0, 711);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -729,7 +747,21 @@ var app = (function () {
     			mount_component(toggle, target, anchor);
     			insert_dev(target, t1, anchor);
     			insert_dev(target, h1, anchor);
+    			insert_dev(target, t3, anchor);
+    			insert_dev(target, input0, anchor);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, input1, anchor);
+    			set_input_value(input1, /*price*/ ctx[2]);
     			current = true;
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input0, "input", /*input_handler*/ ctx[5], false, false, false, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[6])
+    				];
+
+    				mounted = true;
+    			}
     		},
     		p: function update(ctx, [dirty]) {
     			const custominput_changes = {};
@@ -750,6 +782,14 @@ var app = (function () {
     			}
 
     			toggle.$set(toggle_changes);
+
+    			if (!current || dirty & /*price*/ 4 && input0.value !== /*price*/ ctx[2]) {
+    				prop_dev(input0, "value", /*price*/ ctx[2]);
+    			}
+
+    			if (dirty & /*price*/ 4 && to_number(input1.value) !== /*price*/ ctx[2]) {
+    				set_input_value(input1, /*price*/ ctx[2]);
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -768,6 +808,12 @@ var app = (function () {
     			destroy_component(toggle, detaching);
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(h1);
+    			if (detaching) detach_dev(t3);
+    			if (detaching) detach_dev(input0);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(input1);
+    			mounted = false;
+    			run_all(dispose);
     		}
     	};
 
@@ -787,6 +833,7 @@ var app = (function () {
     	validate_slots('App', slots, []);
     	let value = 'Max';
     	let selectedOption = 1;
+    	let price = 0;
 
     	function setValue(event) {
     		$$invalidate(0, value = event.target.value);
@@ -808,17 +855,26 @@ var app = (function () {
     		$$invalidate(1, selectedOption);
     	}
 
+    	const input_handler = event => console.log(event.target.value);
+
+    	function input1_input_handler() {
+    		price = to_number(this.value);
+    		$$invalidate(2, price);
+    	}
+
     	$$self.$capture_state = () => ({
     		CustomInput,
     		Toggle,
     		value,
     		selectedOption,
+    		price,
     		setValue
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('value' in $$props) $$invalidate(0, value = $$props.value);
     		if ('selectedOption' in $$props) $$invalidate(1, selectedOption = $$props.selectedOption);
+    		if ('price' in $$props) $$invalidate(2, price = $$props.price);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -833,9 +889,21 @@ var app = (function () {
     		if ($$self.$$.dirty & /*selectedOption*/ 2) {
     			console.log(selectedOption);
     		}
+
+    		if ($$self.$$.dirty & /*price*/ 4) {
+    			console.log(price);
+    		}
     	};
 
-    	return [value, selectedOption, custominput_val_binding, toggle_chosenOption_binding];
+    	return [
+    		value,
+    		selectedOption,
+    		price,
+    		custominput_val_binding,
+    		toggle_chosenOption_binding,
+    		input_handler,
+    		input1_input_handler
+    	];
     }
 
     class App extends SvelteComponentDev {
