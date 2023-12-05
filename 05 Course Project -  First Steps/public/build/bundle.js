@@ -2374,11 +2374,12 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
-    // (74:2) {#if editMode === 'add'}
+    // (81:2) {#if editMode === 'add'}
     function create_if_block(ctx) {
     	let editmeetup;
     	let current;
     	editmeetup = new EditMeetup({ $$inline: true });
+    	editmeetup.$on("save", /*addMeetup*/ ctx[2]);
 
     	const block = {
     		c: function create() {
@@ -2388,6 +2389,7 @@ var app = (function () {
     			mount_component(editmeetup, target, anchor);
     			current = true;
     		},
+    		p: noop,
     		i: function intro(local) {
     			if (current) return;
     			transition_in(editmeetup.$$.fragment, local);
@@ -2406,7 +2408,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(74:2) {#if editMode === 'add'}",
+    		source: "(81:2) {#if editMode === 'add'}",
     		ctx
     	});
 
@@ -2417,6 +2419,7 @@ var app = (function () {
     	let header;
     	let t0;
     	let main;
+    	let div;
     	let button;
     	let t1;
     	let t2;
@@ -2429,7 +2432,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button.$on("click", /*click_handler*/ ctx[3]);
+    	button.$on("click", /*click_handler*/ ctx[4]);
     	let if_block = /*editMode*/ ctx[1] === 'add' && create_if_block(ctx);
 
     	meetupgrid = new MeetupGrid({
@@ -2437,20 +2440,23 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	meetupgrid.$on("toggle-favorite", /*toggleFavorite*/ ctx[2]);
+    	meetupgrid.$on("toggle-favorite", /*toggleFavorite*/ ctx[3]);
 
     	const block = {
     		c: function create() {
     			create_component(header.$$.fragment);
     			t0 = space();
     			main = element("main");
+    			div = element("div");
     			create_component(button.$$.fragment);
     			t1 = space();
     			if (if_block) if_block.c();
     			t2 = space();
     			create_component(meetupgrid.$$.fragment);
-    			attr_dev(main, "class", "svelte-1r5xu04");
-    			add_location(main, file, 71, 0, 2134);
+    			attr_dev(div, "class", "meetup-controls svelte-1wuqq9t");
+    			add_location(div, file, 76, 2, 2286);
+    			attr_dev(main, "class", "svelte-1wuqq9t");
+    			add_location(main, file, 75, 0, 2277);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2459,7 +2465,8 @@ var app = (function () {
     			mount_component(header, target, anchor);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, main, anchor);
-    			mount_component(button, main, null);
+    			append_dev(main, div);
+    			mount_component(button, div, null);
     			append_dev(main, t1);
     			if (if_block) if_block.m(main, null);
     			append_dev(main, t2);
@@ -2469,6 +2476,8 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			if (/*editMode*/ ctx[1] === 'add') {
     				if (if_block) {
+    					if_block.p(ctx, dirty);
+
     					if (dirty & /*editMode*/ 2) {
     						transition_in(if_block, 1);
     					}
@@ -2563,19 +2572,24 @@ var app = (function () {
 
     	let editMode;
 
-    	function addMeetup() {
+    	function addMeetup(event) {
+    		const { detail } = event;
+
     		const newMeetup = {
     			id: Math.random().toString(),
-    			title,
-    			subtitle,
-    			description,
-    			imageUrl,
-    			contactEmail: email,
-    			address
+    			title: detail.title,
+    			subtitle: detail.subtitle,
+    			description: detail.description,
+    			imageUrl: detail.imageUrl,
+    			contactEmail: detail.email,
+    			address: detail.address
     		};
 
+    		// console.log('newMeetup', newMeetup);
     		// meetups.push(newMeetup); // DOES NOT WORK!
     		$$invalidate(0, meetups = [newMeetup, ...meetups]);
+
+    		$$invalidate(1, editMode = null);
     	}
 
     	function toggleFavorite(event) {
@@ -2629,7 +2643,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [meetups, editMode, toggleFavorite, click_handler];
+    	return [meetups, editMode, addMeetup, toggleFavorite, click_handler];
     }
 
     class App extends SvelteComponentDev {
