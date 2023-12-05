@@ -482,7 +482,7 @@ var app = (function () {
     		c: function create() {
     			input = element("input");
     			attr_dev(input, "type", "text");
-    			add_location(input, file$2, 4, 0, 38);
+    			add_location(input, file$2, 8, 0, 85);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -492,7 +492,7 @@ var app = (function () {
     			set_input_value(input, /*val*/ ctx[0]);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[1]);
+    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[2]);
     				mounted = true;
     			}
     		},
@@ -526,6 +526,10 @@ var app = (function () {
     	validate_slots('CustomInput', slots, []);
     	let { val } = $$props;
 
+    	function empty() {
+    		$$invalidate(0, val = '');
+    	}
+
     	$$self.$$.on_mount.push(function () {
     		if (val === undefined && !('val' in $$props || $$self.$$.bound[$$self.$$.props['val']])) {
     			console.warn("<CustomInput> was created without expected prop 'val'");
@@ -547,7 +551,7 @@ var app = (function () {
     		if ('val' in $$props) $$invalidate(0, val = $$props.val);
     	};
 
-    	$$self.$capture_state = () => ({ val });
+    	$$self.$capture_state = () => ({ val, empty });
 
     	$$self.$inject_state = $$props => {
     		if ('val' in $$props) $$invalidate(0, val = $$props.val);
@@ -557,13 +561,13 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [val, input_input_handler];
+    	return [val, empty, input_input_handler];
     }
 
     class CustomInput extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { val: 0 });
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { val: 0, empty: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -578,6 +582,14 @@ var app = (function () {
     	}
 
     	set val(value) {
+    		throw new Error("<CustomInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get empty() {
+    		return this.$$.ctx[1];
+    	}
+
+    	set empty(value) {
     		throw new Error("<CustomInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -779,7 +791,7 @@ var app = (function () {
     	let dispose;
 
     	function custominput_val_binding(value) {
-    		/*custominput_val_binding*/ ctx[9](value);
+    		/*custominput_val_binding*/ ctx[10](value);
     	}
 
     	let custominput_props = {};
@@ -790,9 +802,10 @@ var app = (function () {
 
     	custominput = new CustomInput({ props: custominput_props, $$inline: true });
     	binding_callbacks.push(() => bind(custominput, 'val', custominput_val_binding));
+    	/*custominput_binding*/ ctx[11](custominput);
 
     	function toggle_chosenOption_binding(value) {
-    		/*toggle_chosenOption_binding*/ ctx[10](value);
+    		/*toggle_chosenOption_binding*/ ctx[12](value);
     	}
 
     	let toggle_props = {};
@@ -803,7 +816,7 @@ var app = (function () {
 
     	toggle = new Toggle({ props: toggle_props, $$inline: true });
     	binding_callbacks.push(() => bind(toggle, 'chosenOption', toggle_chosenOption_binding));
-    	binding_group = init_binding_group(/*$$binding_groups*/ ctx[15][0]);
+    	binding_group = init_binding_group(/*$$binding_groups*/ ctx[17][0]);
 
     	const block = {
     		c: function create() {
@@ -869,71 +882,71 @@ var app = (function () {
     			t31 = space();
     			div = element("div");
     			div.textContent = "someDiv";
-    			add_location(h10, file, 37, 0, 830);
+    			add_location(h10, file, 40, 0, 929);
     			attr_dev(input0, "type", "number");
     			input0.value = /*price*/ ctx[2];
-    			add_location(input0, file, 39, 0, 857);
+    			add_location(input0, file, 42, 0, 956);
     			attr_dev(input1, "type", "number");
-    			add_location(input1, file, 46, 0, 983);
+    			add_location(input1, file, 49, 0, 1082);
     			attr_dev(input2, "type", "checkbox");
     			attr_dev(input2, "name", "");
     			attr_dev(input2, "id", "");
-    			add_location(input2, file, 49, 2, 1037);
-    			add_location(label0, file, 48, 0, 1027);
-    			add_location(h11, file, 53, 0, 1127);
+    			add_location(input2, file, 52, 2, 1136);
+    			add_location(label0, file, 51, 0, 1126);
+    			add_location(h11, file, 56, 0, 1226);
     			attr_dev(input3, "type", "radio");
     			attr_dev(input3, "name", "color");
     			input3.__value = "red";
     			input3.value = input3.__value;
-    			add_location(input3, file, 55, 2, 1161);
-    			add_location(label1, file, 54, 0, 1151);
+    			add_location(input3, file, 58, 2, 1260);
+    			add_location(label1, file, 57, 0, 1250);
     			attr_dev(input4, "type", "radio");
     			attr_dev(input4, "name", "color");
     			input4.__value = "green";
     			input4.value = input4.__value;
-    			add_location(input4, file, 59, 2, 1253);
-    			add_location(label2, file, 58, 0, 1243);
+    			add_location(input4, file, 62, 2, 1352);
+    			add_location(label2, file, 61, 0, 1342);
     			attr_dev(input5, "type", "radio");
     			attr_dev(input5, "name", "color");
     			input5.__value = "blue";
     			input5.value = input5.__value;
-    			add_location(input5, file, 63, 2, 1349);
-    			add_location(label3, file, 62, 0, 1339);
-    			add_location(h12, file, 67, 0, 1434);
+    			add_location(input5, file, 66, 2, 1448);
+    			add_location(label3, file, 65, 0, 1438);
+    			add_location(h12, file, 70, 0, 1533);
     			attr_dev(input6, "type", "checkbox");
     			attr_dev(input6, "name", "color");
     			input6.__value = "red";
     			input6.value = input6.__value;
-    			add_location(input6, file, 69, 2, 1468);
-    			add_location(label4, file, 68, 0, 1458);
+    			add_location(input6, file, 72, 2, 1567);
+    			add_location(label4, file, 71, 0, 1557);
     			attr_dev(input7, "type", "checkbox");
     			attr_dev(input7, "name", "color");
     			input7.__value = "green";
     			input7.value = input7.__value;
-    			add_location(input7, file, 73, 2, 1563);
-    			add_location(label5, file, 72, 0, 1553);
+    			add_location(input7, file, 76, 2, 1662);
+    			add_location(label5, file, 75, 0, 1652);
     			attr_dev(input8, "type", "checkbox");
     			attr_dev(input8, "name", "color");
     			input8.__value = "blue";
     			input8.value = input8.__value;
-    			add_location(input8, file, 77, 2, 1662);
-    			add_location(label6, file, 76, 0, 1652);
+    			add_location(input8, file, 80, 2, 1761);
+    			add_location(label6, file, 79, 0, 1751);
     			option0.__value = "green";
     			option0.value = option0.__value;
-    			add_location(option0, file, 82, 2, 1787);
+    			add_location(option0, file, 85, 2, 1886);
     			option1.__value = "red";
     			option1.value = option1.__value;
-    			add_location(option1, file, 83, 2, 1826);
+    			add_location(option1, file, 86, 2, 1925);
     			option2.__value = "blue";
     			option2.value = option2.__value;
-    			add_location(option2, file, 84, 2, 1861);
-    			if (/*colorOptions*/ ctx[5] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[21].call(select));
-    			add_location(select, file, 81, 0, 1750);
-    			add_location(hr, file, 87, 0, 1907);
+    			add_location(option2, file, 87, 2, 1960);
+    			if (/*colorOptions*/ ctx[5] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[23].call(select));
+    			add_location(select, file, 84, 0, 1849);
+    			add_location(hr, file, 90, 0, 2006);
     			attr_dev(input9, "type", "text");
-    			add_location(input9, file, 89, 0, 1915);
-    			add_location(button, file, 90, 0, 1963);
-    			add_location(div, file, 92, 0, 2006);
+    			add_location(input9, file, 92, 0, 2014);
+    			add_location(button, file, 93, 0, 2062);
+    			add_location(div, file, 95, 0, 2105);
     			binding_group.p(input3, input4, input5, input6, input7, input8);
     		},
     		l: function claim(nodes) {
@@ -999,27 +1012,27 @@ var app = (function () {
     			insert_dev(target, hr, anchor);
     			insert_dev(target, t28, anchor);
     			insert_dev(target, input9, anchor);
-    			/*input9_binding*/ ctx[22](input9);
+    			/*input9_binding*/ ctx[24](input9);
     			insert_dev(target, t29, anchor);
     			insert_dev(target, button, anchor);
     			insert_dev(target, t31, anchor);
     			insert_dev(target, div, anchor);
-    			/*div_binding*/ ctx[23](div);
+    			/*div_binding*/ ctx[25](div);
     			current = true;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input_handler*/ ctx[11], false, false, false, false),
-    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[12]),
-    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[13]),
-    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[14]),
-    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[16]),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[17]),
-    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[18]),
-    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[19]),
-    					listen_dev(input8, "change", /*input8_change_handler*/ ctx[20]),
-    					listen_dev(select, "change", /*select_change_handler*/ ctx[21]),
-    					listen_dev(button, "click", /*saveData*/ ctx[8], false, false, false, false)
+    					listen_dev(input0, "input", /*input_handler*/ ctx[13], false, false, false, false),
+    					listen_dev(input1, "input", /*input1_input_handler*/ ctx[14]),
+    					listen_dev(input2, "change", /*input2_change_handler*/ ctx[15]),
+    					listen_dev(input3, "change", /*input3_change_handler*/ ctx[16]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[18]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[19]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[20]),
+    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[21]),
+    					listen_dev(input8, "change", /*input8_change_handler*/ ctx[22]),
+    					listen_dev(select, "change", /*select_change_handler*/ ctx[23]),
+    					listen_dev(button, "click", /*saveData*/ ctx[9], false, false, false, false)
     				];
 
     				mounted = true;
@@ -1097,6 +1110,7 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
+    			/*custominput_binding*/ ctx[11](null);
     			destroy_component(custominput, detaching);
     			if (detaching) detach_dev(t0);
     			destroy_component(toggle, detaching);
@@ -1130,12 +1144,12 @@ var app = (function () {
     			if (detaching) detach_dev(hr);
     			if (detaching) detach_dev(t28);
     			if (detaching) detach_dev(input9);
-    			/*input9_binding*/ ctx[22](null);
+    			/*input9_binding*/ ctx[24](null);
     			if (detaching) detach_dev(t29);
     			if (detaching) detach_dev(button);
     			if (detaching) detach_dev(t31);
     			if (detaching) detach_dev(div);
-    			/*div_binding*/ ctx[23](null);
+    			/*div_binding*/ ctx[25](null);
     			binding_group.r();
     			mounted = false;
     			run_all(dispose);
@@ -1164,6 +1178,7 @@ var app = (function () {
     	let colorOptions = '';
     	let usernameInput;
     	let someDiv;
+    	let customInput;
 
     	function setValue(event) {
     		$$invalidate(0, value = event.target.value);
@@ -1172,6 +1187,7 @@ var app = (function () {
     	function saveData() {
     		console.log(usernameInput.value);
     		console.log(someDiv);
+    		customInput.empty();
     	}
 
     	const writable_props = [];
@@ -1185,6 +1201,13 @@ var app = (function () {
     	function custominput_val_binding(value$1) {
     		value = value$1;
     		$$invalidate(0, value);
+    	}
+
+    	function custominput_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			customInput = $$value;
+    			$$invalidate(6, customInput);
+    		});
     	}
 
     	function toggle_chosenOption_binding(value) {
@@ -1242,14 +1265,14 @@ var app = (function () {
     	function input9_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			usernameInput = $$value;
-    			$$invalidate(6, usernameInput);
+    			$$invalidate(7, usernameInput);
     		});
     	}
 
     	function div_binding($$value) {
     		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
     			someDiv = $$value;
-    			$$invalidate(7, someDiv);
+    			$$invalidate(8, someDiv);
     		});
     	}
 
@@ -1264,6 +1287,7 @@ var app = (function () {
     		colorOptions,
     		usernameInput,
     		someDiv,
+    		customInput,
     		setValue,
     		saveData
     	});
@@ -1275,8 +1299,9 @@ var app = (function () {
     		if ('agreed' in $$props) $$invalidate(3, agreed = $$props.agreed);
     		if ('color' in $$props) $$invalidate(4, color = $$props.color);
     		if ('colorOptions' in $$props) $$invalidate(5, colorOptions = $$props.colorOptions);
-    		if ('usernameInput' in $$props) $$invalidate(6, usernameInput = $$props.usernameInput);
-    		if ('someDiv' in $$props) $$invalidate(7, someDiv = $$props.someDiv);
+    		if ('usernameInput' in $$props) $$invalidate(7, usernameInput = $$props.usernameInput);
+    		if ('someDiv' in $$props) $$invalidate(8, someDiv = $$props.someDiv);
+    		if ('customInput' in $$props) $$invalidate(6, customInput = $$props.customInput);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1307,6 +1332,10 @@ var app = (function () {
     		if ($$self.$$.dirty & /*colorOptions*/ 32) {
     			console.log(colorOptions);
     		}
+
+    		if ($$self.$$.dirty & /*customInput*/ 64) {
+    			console.log(customInput);
+    		}
     	};
 
     	return [
@@ -1316,10 +1345,12 @@ var app = (function () {
     		agreed,
     		color,
     		colorOptions,
+    		customInput,
     		usernameInput,
     		someDiv,
     		saveData,
     		custominput_val_binding,
+    		custominput_binding,
     		toggle_chosenOption_binding,
     		input_handler,
     		input1_input_handler,

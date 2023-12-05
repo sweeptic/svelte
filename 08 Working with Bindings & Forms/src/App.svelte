@@ -9,6 +9,7 @@
   let colorOptions = '';
   let usernameInput;
   let someDiv;
+  let customInput;
 
   $: console.log(value);
   $: console.log(selectedOption);
@@ -16,6 +17,7 @@
   $: console.log(agreed);
   $: console.log(color);
   $: console.log(colorOptions);
+  $: console.log(customInput);
 
   function setValue(event) {
     value = event.target.value;
@@ -24,6 +26,7 @@
   function saveData() {
     console.log(usernameInput.value);
     console.log(someDiv);
+    customInput.empty();
   }
 </script>
 
@@ -31,7 +34,7 @@
 <!-- <input type="text" bind:value={value} /> -->
 <!-- <input type="text" bind:value /> -->
 
-<CustomInput bind:val={value} />
+<CustomInput bind:val={value} bind:this={customInput} />
 
 <Toggle bind:chosenOption={selectedOption} />
 
