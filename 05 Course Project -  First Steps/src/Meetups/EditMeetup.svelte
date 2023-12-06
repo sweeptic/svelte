@@ -1,17 +1,16 @@
 <script>
-  import Modal from './../UI/Modal.svelte';
-  // your script goes here
+  import Modal from '../UI/Modal.svelte';
   import TextInput from '../UI/TextInput.svelte';
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { isEmpty, isValidEmail } from '../helpers/validation';
+  import { isEmpty, isValidEmail } from '../helpers/validation.js';
 
-  let title = '';
-  let subtitle = '';
-  let address = '';
-  let email = '';
-  let description = '';
-  let imageUrl = '';
+  let title = 'gh';
+  let subtitle = 'gh';
+  let address = 'gh';
+  let email = 'fg@df.com';
+  let description = 'fg';
+  let imageUrl = 'fg';
 
   const dispatch = createEventDispatcher();
 
@@ -40,7 +39,7 @@
     });
   }
 
-  function onCancel() {
+  function cancel() {
     dispatch('cancel');
   }
 </script>
@@ -75,7 +74,7 @@
       id="imageUrl"
       label="Image URL"
       valid={imageUrlValid}
-      validityMessage="Please enter a valid imageUrl."
+      validityMessage="Please enter a valid image url."
       value={imageUrl}
       on:input={(event) => (imageUrl = event.target.value)}
     />
@@ -83,7 +82,7 @@
       id="email"
       label="E-Mail"
       valid={emailValid}
-      validityMessage="Please enter a valid email."
+      validityMessage="Please enter a valid email address."
       type="email"
       value={email}
       on:input={(event) => (email = event.target.value)}
@@ -97,15 +96,17 @@
       value={description}
       on:input={(event) => (description = event.target.value)}
     />
-    <Button type="submit" mode="outline" on:click={onCancel} slot="footer"
-      >Cancel</Button
-    >
-    <Button disabled={!formIsValid} type="submit" slot="footer">Save</Button>
   </form>
+  <div slot="footer">
+    <Button type="button" mode="outline" on:click={cancel}>Cancel</Button>
+    <Button type="button" on:click={submitForm} disabled={!formIsValid}
+      >Save</Button
+    >
+  </div>
 </Modal>
 
 <style>
   form {
     width: 100%;
   }
-</Modal>
+</style>

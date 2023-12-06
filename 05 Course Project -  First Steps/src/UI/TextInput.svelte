@@ -14,7 +14,13 @@
 <div class="form-control">
   <label for={id}>{label}</label>
   {#if controlType === 'textarea'}
-    <textarea class:invalid={!valid && touched} {rows} {id} on:value />
+    <textarea
+      class:invalid={!valid && touched}
+      {rows}
+      {id}
+      on:input
+      on:blur={() => (touched = true)}
+    />
   {:else}
     <input
       class:invalid={!valid && touched}
