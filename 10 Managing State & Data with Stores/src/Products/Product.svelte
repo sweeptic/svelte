@@ -1,5 +1,6 @@
 <script>
-  import Button from "../UI/Button.svelte";
+  import cartItems from '../Cart/cart-store';
+  import Button from '../UI/Button.svelte';
 
   export let id;
   export let title;
@@ -8,9 +9,23 @@
 
   function addToCart() {
     // Now what?
+    cartItems.update((items) => {
+      return [...items, { id: Math.random(), title, price }];
+    });
     console.log(id);
   }
 </script>
+
+<div class="product">
+  <div>
+    <h1>{title}</h1>
+    <h2>{price}</h2>
+    <p>{description}</p>
+  </div>
+  <div>
+    <Button on:click={addToCart}>Add to Cart</Button>
+  </div>
+</div>
 
 <style>
   .product {
@@ -25,7 +40,7 @@
 
   h1 {
     font-size: 1.25rem;
-    font-family: "Roboto Slab", serif;
+    font-family: 'Roboto Slab', serif;
     margin: 0;
   }
 
@@ -39,14 +54,3 @@
     margin: 0;
   }
 </style>
-
-<div class="product">
-  <div>
-    <h1>{title}</h1>
-    <h2>{price}</h2>
-    <p>{description}</p>
-  </div>
-  <div>
-    <Button on:click={addToCart}>Add to Cart</Button>
-  </div>
-</div>

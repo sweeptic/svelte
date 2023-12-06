@@ -1428,7 +1428,7 @@ var app = (function () {
     const { console: console_1 } = globals;
     const file$1 = "src/Products/Product.svelte";
 
-    // (50:4) <Button on:click={addToCart}>
+    // (26:4) <Button on:click={addToCart}>
     function create_default_slot(ctx) {
     	let t;
 
@@ -1448,7 +1448,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(50:4) <Button on:click={addToCart}>",
+    		source: "(26:4) <Button on:click={addToCart}>",
     		ctx
     	});
 
@@ -1496,16 +1496,16 @@ var app = (function () {
     			t5 = space();
     			div1 = element("div");
     			create_component(button.$$.fragment);
-    			attr_dev(h1, "class", "svelte-9ht2za");
-    			add_location(h1, file$1, 44, 4, 657);
-    			attr_dev(h2, "class", "svelte-9ht2za");
-    			add_location(h2, file$1, 45, 4, 678);
-    			attr_dev(p, "class", "svelte-9ht2za");
-    			add_location(p, file$1, 46, 4, 699);
-    			add_location(div0, file$1, 43, 2, 647);
-    			add_location(div1, file$1, 48, 2, 731);
-    			attr_dev(div2, "class", "product svelte-9ht2za");
-    			add_location(div2, file$1, 42, 0, 623);
+    			attr_dev(h1, "class", "svelte-12wunlm");
+    			add_location(h1, file$1, 20, 4, 400);
+    			attr_dev(h2, "class", "svelte-12wunlm");
+    			add_location(h2, file$1, 21, 4, 421);
+    			attr_dev(p, "class", "svelte-12wunlm");
+    			add_location(p, file$1, 22, 4, 442);
+    			add_location(div0, file$1, 19, 2, 390);
+    			add_location(div1, file$1, 24, 2, 474);
+    			attr_dev(div2, "class", "product svelte-12wunlm");
+    			add_location(div2, file$1, 18, 0, 366);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1574,6 +1574,10 @@ var app = (function () {
 
     	function addToCart() {
     		// Now what?
+    		cartItems.update(items => {
+    			return [...items, { id: Math.random(), title, price }];
+    		});
+
     		console.log(id);
     	}
 
@@ -1609,6 +1613,7 @@ var app = (function () {
     	};
 
     	$$self.$capture_state = () => ({
+    		cartItems,
     		Button,
     		id,
     		title,
