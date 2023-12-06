@@ -33,6 +33,21 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
+    }
     function create_slot(definition, ctx, $$scope, fn) {
         if (definition) {
             const slot_ctx = get_slot_context(definition, ctx, $$scope, fn);
@@ -1162,7 +1177,7 @@ var app = (function () {
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i];
+    	child_ctx[1] = list[i];
     	return child_ctx;
     }
 
@@ -1174,7 +1189,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "No items in cart yet!";
-    			add_location(p, file$2, 21, 6, 469);
+    			add_location(p, file$2, 21, 6, 509);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -1196,7 +1211,7 @@ var app = (function () {
     	return block;
     }
 
-    // (19:4) {#each items as item (item.id)}
+    // (19:4) {#each $cartItems as item (item.id)}
     function create_each_block$1(key_1, ctx) {
     	let first;
     	let cartitem;
@@ -1204,9 +1219,9 @@ var app = (function () {
 
     	cartitem = new CartItem({
     			props: {
-    				id: /*item*/ ctx[2].id,
-    				title: /*item*/ ctx[2].title,
-    				price: /*item*/ ctx[2].price
+    				id: /*item*/ ctx[1].id,
+    				title: /*item*/ ctx[1].title,
+    				price: /*item*/ ctx[1].price
     			},
     			$$inline: true
     		});
@@ -1227,9 +1242,9 @@ var app = (function () {
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
     			const cartitem_changes = {};
-    			if (dirty & /*items*/ 1) cartitem_changes.id = /*item*/ ctx[2].id;
-    			if (dirty & /*items*/ 1) cartitem_changes.title = /*item*/ ctx[2].title;
-    			if (dirty & /*items*/ 1) cartitem_changes.price = /*item*/ ctx[2].price;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.id = /*item*/ ctx[1].id;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.title = /*item*/ ctx[1].title;
+    			if (dirty & /*$cartItems*/ 1) cartitem_changes.price = /*item*/ ctx[1].price;
     			cartitem.$set(cartitem_changes);
     		},
     		i: function intro(local) {
@@ -1251,7 +1266,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(19:4) {#each items as item (item.id)}",
+    		source: "(19:4) {#each $cartItems as item (item.id)}",
     		ctx
     	});
 
@@ -1266,9 +1281,9 @@ var app = (function () {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
     	let current;
-    	let each_value = /*items*/ ctx[0];
+    	let each_value = /*$cartItems*/ ctx[0];
     	validate_each_argument(each_value);
-    	const get_key = ctx => /*item*/ ctx[2].id;
+    	const get_key = ctx => /*item*/ ctx[1].id;
     	validate_each_keys(ctx, each_value, get_each_context$1, get_key);
 
     	for (let i = 0; i < each_value.length; i += 1) {
@@ -1299,11 +1314,11 @@ var app = (function () {
     				each_1_else.c();
     			}
 
-    			add_location(h1, file$2, 16, 2, 324);
+    			add_location(h1, file$2, 16, 2, 359);
     			attr_dev(ul, "class", "svelte-1c2znv1");
-    			add_location(ul, file$2, 17, 2, 340);
+    			add_location(ul, file$2, 17, 2, 375);
     			attr_dev(section, "class", "svelte-1c2znv1");
-    			add_location(section, file$2, 15, 0, 312);
+    			add_location(section, file$2, 15, 0, 347);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1327,8 +1342,8 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*items*/ 1) {
-    				each_value = /*items*/ ctx[0];
+    			if (dirty & /*$cartItems*/ 1) {
+    				each_value = /*$cartItems*/ ctx[0];
     				validate_each_argument(each_value);
     				group_outros();
     				validate_each_keys(ctx, each_value, get_each_context$1, get_key);
@@ -1386,51 +1401,31 @@ var app = (function () {
     }
 
     function instance$3($$self, $$props, $$invalidate) {
+    	let $cartItems;
+    	validate_store(cartItems, 'cartItems');
+    	component_subscribe($$self, cartItems, $$value => $$invalidate(0, $cartItems = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Cart', slots, []);
-    	let { items = [] } = $$props;
-
-    	const unsubscribe = cartItems.subscribe(its => {
-    		$$invalidate(0, items = [...its]);
-    	});
-
-    	onDestroy(() => {
-    		if (unsubscribe) unsubscribe();
-    	});
-
-    	const writable_props = ['items'];
+    	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Cart> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$$set = $$props => {
-    		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-    	};
-
     	$$self.$capture_state = () => ({
     		CartItem,
     		cartItems,
     		onDestroy,
-    		items,
-    		unsubscribe
+    		$cartItems
     	});
 
-    	$$self.$inject_state = $$props => {
-    		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [items];
+    	return [$cartItems];
     }
 
     class Cart extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { items: 0 });
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1438,14 +1433,6 @@ var app = (function () {
     			options,
     			id: create_fragment$3.name
     		});
-    	}
-
-    	get items() {
-    		throw new Error("<Cart>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set items(value) {
-    		throw new Error("<Cart>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
