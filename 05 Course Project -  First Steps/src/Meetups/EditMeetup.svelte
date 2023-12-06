@@ -2,16 +2,30 @@
   import Modal from '../UI/Modal.svelte';
   import TextInput from '../UI/TextInput.svelte';
   import Button from '../UI/Button.svelte';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onDestroy } from 'svelte';
   import { isEmpty, isValidEmail } from '../helpers/validation.js';
   import meetups from './meetups-store';
 
-  let title = 'gh';
-  let subtitle = 'gh';
-  let address = 'gh';
-  let email = 'fg@df.com';
-  let description = 'fg';
-  let imageUrl = 'fg';
+  export let id = null;
+
+  let title = '';
+  let subtitle = '';
+  let address = '';
+  let email = '';
+  let description = '';
+  let imageUrl = '';
+
+  if (id) {
+    const unsubscribe = meetups.subscribe((items) => {
+      const selectedMeetup = items.find((i) => i.id === id);
+      title = selectedMeetup.title;
+      subtitle = selectedMeetup.subtitle;
+      address = selectedMeetup.address;
+      email = selectedMeetup.contactEmail;
+      description = selectedMeetup.description;
+      imageUrl = selectedMeetup.imageUrl;
+    });
+  }
 
   const dispatch = createEventDispatcher();
 
@@ -40,7 +54,12 @@
       address: address,
     };
 
-    meetups.addMeetup(meetupData);
+    if (id) {
+      meetups.updateMeetup(id, meetupData);
+    } else {
+      meetups.addMeetup(meetupData);
+    }
+
     dispatch('save');
   }
 
