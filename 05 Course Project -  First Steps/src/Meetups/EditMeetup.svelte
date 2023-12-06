@@ -28,6 +28,14 @@
   $: emailValid = !isEmpty(email) && isValidEmail(email);
   $: descriptionValid = !isEmpty(description);
 
+  $: formIsValid =
+    titleValid &&
+    subtitleValid &&
+    addressValid &&
+    imageUrlValid &&
+    emailValid &&
+    descriptionValid;
+
   function submitForm() {
     dispatch('save', {
       title,
@@ -99,7 +107,7 @@
     <Button type="submit" mode="outline" on:click={onCancel} slot="footer"
       >Cancel</Button
     >
-    <Button type="submit" slot="footer">Save</Button>
+    <Button disabled={!formIsValid} type="submit" slot="footer">Save</Button>
   </form>
 </Modal>
 
