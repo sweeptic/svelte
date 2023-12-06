@@ -4,6 +4,7 @@
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher } from 'svelte';
   import { isEmpty, isValidEmail } from '../helpers/validation.js';
+  import meetups from './meetups-store';
 
   let title = 'gh';
   let subtitle = 'gh';
@@ -29,14 +30,18 @@
     descriptionValid;
 
   function submitForm() {
-    dispatch('save', {
-      title,
-      subtitle,
-      address,
-      email,
-      description,
-      imageUrl,
-    });
+    const meetupData = {
+      //   id: Math.random().toString(),
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      imageUrl: imageUrl,
+      contactEmail: email,
+      address: address,
+    };
+
+    meetups.addMeetup(meetupData);
+    dispatch('save');
   }
 
   function cancel() {
