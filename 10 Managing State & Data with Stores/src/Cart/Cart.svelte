@@ -1,16 +1,31 @@
 <script>
-  import CartItem from './CartItem.svelte';
-  import cartItems from './cart-store';
   import { onDestroy } from 'svelte';
+  import cartItems from './cart-store.js';
+  import CartItem from './CartItem.svelte';
 
-  //   export let items = [];
-  //   const unsubscribe = cartItems.subscribe((its) => {
-  //     items = [...its];
+  //   let items;
+
+  //   const unsubscribe = cartItems.subscribe(its => {
+  //     items = its;
   //   });
 
   //   onDestroy(() => {
-  //     if (unsubscribe) unsubscribe();
+  //     if (unsubscribe) {
+  //       unsubscribe();
+  //     }
   //   });
+  //   export let items = [
+  //     {
+  //       id: "p1",
+  //       title: "Test",
+  //       price: 9.99
+  //     },
+  //     {
+  //       id: "p2",
+  //       title: "Test",
+  //       price: 9.99
+  //     }
+  //   ];
 </script>
 
 <section>

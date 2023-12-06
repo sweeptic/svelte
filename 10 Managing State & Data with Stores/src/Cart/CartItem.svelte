@@ -1,20 +1,32 @@
 <script>
+  import cartItems from './cart-store.js';
+  import { products } from '../Products/products-store.js';
   import Button from '../UI/Button.svelte';
-  import cartItems from './cart-store';
 
   export let title;
   export let price;
   export let id;
 
   let showDescription = false;
+  let description = 'Not available!';
+  //   let fetchedProducts = [];
+
+  //   products.subscribe(prods => {
+  //       fetchedProducts = prods;
+  //   });
 
   function displayDescription() {
     showDescription = !showDescription;
+    // description = fetchedProducts.find(p => p.id === id).description;
+    const unsubscribe = products.subscribe((prods) => {
+      description = prods.find((p) => p.id === id).description;
+    });
+    unsubscribe();
   }
 
   function removeFromCart() {
     cartItems.update((items) => {
-      return items.filter((item) => item.id !== id);
+      return items.filter((i) => i.id !== id);
     });
   }
 </script>
@@ -27,7 +39,7 @@
   </Button>
   <Button on:click={removeFromCart}>Remove from Cart</Button>
   {#if showDescription}
-    <p>Not available :(</p>
+    <p>{description}</p>
   {/if}
 </li>
 
