@@ -28,5 +28,29 @@ const meetups = writable(
         },
     ]);
 
+const customMeetupStore = {
+    subscribe: meetups.subscribe,
+    addMeetup: (meetupData) => {
+        const newMeetup = {
+            ...meetupData,
+            id: Math.random().toString(),
+            isFavorite: false
+        };
+        meetups.update((items) => {
+            return [newMeetup, ...items];
+        });
+    },
+    toggleFavorite: (id) => {
+        meetups.update((items) => {
+            const updatedMeetup = { ...items.find((m) => m.id === id) };
+            updatedMeetup.isFavorite = !updatedMeetup.isFavorite;
+            const index = items.findIndex((m) => m.id === id);
+            const updatedMeetups = [...items];
+            updatedMeetups[index] = updatedMeetup;
+            return updatedMeetups;
+        });
+    }
+};
 
-export default meetups;
+
+export default customMeetupStore;

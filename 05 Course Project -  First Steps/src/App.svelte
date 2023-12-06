@@ -19,7 +19,7 @@
   function addMeetup(event) {
     const { detail } = event;
 
-    const newMeetup = {
+    const meetupData = {
       id: Math.random().toString(),
       title: detail.title,
       subtitle: detail.subtitle,
@@ -31,20 +31,14 @@
     // console.log('newMeetup', newMeetup);
 
     // meetups.push(newMeetup); // DOES NOT WORK!
-    meetups = [newMeetup, ...meetups];
+    // meetups = [newMeetup, ...meetups];
+    meetups.addMeetup(meetupData);
     editMode = null;
   }
 
   function toggleFavorite(event) {
-    console.log('event', event);
     const id = event.detail;
-    const updatedMeetup = { ...meetups.find((m) => m.id === id) };
-    updatedMeetup.isFavorite = !updatedMeetup.isFavorite;
-    const index = meetups.findIndex((m) => m.id === id);
-    const updatedMeetups = [...meetups];
-    updatedMeetups[index] = updatedMeetup;
-
-    meetups = updatedMeetups;
+    meetups.toggleFavorite(id);
   }
 
   function cancelEdit() {

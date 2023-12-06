@@ -21,7 +21,6 @@
   $: imageUrlValid = !isEmpty(imageUrl);
   $: emailValid = !isEmpty(email) && isValidEmail(email);
   $: descriptionValid = !isEmpty(description);
-
   $: formIsValid =
     titleValid &&
     subtitleValid &&
@@ -107,8 +106,6 @@
 
 <style>
   form {
-    /* width: 30rem; */
     width: 100%;
-    /* margin: auto; */
   }
-</style>
+</Modal>
