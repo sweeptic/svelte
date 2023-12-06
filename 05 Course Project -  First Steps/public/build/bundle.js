@@ -142,6 +142,9 @@ var app = (function () {
     function children(element) {
         return Array.from(element.childNodes);
     }
+    function toggle_class(element, name, toggle) {
+        element.classList[toggle ? 'add' : 'remove'](name);
+    }
     function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
         const e = document.createEvent('CustomEvent');
         e.initCustomEvent(type, bubbles, cancelable, detail);
@@ -1192,7 +1195,7 @@ var app = (function () {
 
     const file$6 = "src/UI/TextInput.svelte";
 
-    // (14:2) {:else}
+    // (16:2) {:else}
     function create_else_block(ctx) {
     	let input;
     	let mounted;
@@ -1204,14 +1207,15 @@ var app = (function () {
     			attr_dev(input, "type", /*type*/ ctx[5]);
     			attr_dev(input, "id", /*id*/ ctx[1]);
     			input.value = /*value*/ ctx[4];
-    			attr_dev(input, "class", "svelte-xzzzlr");
-    			add_location(input, file$6, 14, 4, 320);
+    			attr_dev(input, "class", "svelte-1teoc1z");
+    			toggle_class(input, "invalid", !/*valid*/ ctx[6]);
+    			add_location(input, file$6, 16, 4, 405);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, input, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_handler_1*/ ctx[7], false, false, false, false);
+    				dispose = listen_dev(input, "input", /*input_handler_1*/ ctx[9], false, false, false, false);
     				mounted = true;
     			}
     		},
@@ -1227,6 +1231,10 @@ var app = (function () {
     			if (dirty & /*value*/ 16 && input.value !== /*value*/ ctx[4]) {
     				prop_dev(input, "value", /*value*/ ctx[4]);
     			}
+
+    			if (dirty & /*valid*/ 64) {
+    				toggle_class(input, "invalid", !/*valid*/ ctx[6]);
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(input);
@@ -1239,15 +1247,15 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(14:2) {:else}",
+    		source: "(16:2) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (12:2) {#if controlType === 'textarea'}
-    function create_if_block$2(ctx) {
+    // (14:2) {#if controlType === 'textarea'}
+    function create_if_block_1(ctx) {
     	let textarea;
     	let mounted;
     	let dispose;
@@ -1258,14 +1266,15 @@ var app = (function () {
     			attr_dev(textarea, "rows", /*rows*/ ctx[3]);
     			attr_dev(textarea, "id", /*id*/ ctx[1]);
     			textarea.value = /*value*/ ctx[4];
-    			attr_dev(textarea, "class", "svelte-xzzzlr");
-    			add_location(textarea, file$6, 12, 4, 264);
+    			attr_dev(textarea, "class", "svelte-1teoc1z");
+    			toggle_class(textarea, "invalid", !/*valid*/ ctx[6]);
+    			add_location(textarea, file$6, 14, 4, 326);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, textarea, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(textarea, "input", /*input_handler*/ ctx[6], false, false, false, false);
+    				dispose = listen_dev(textarea, "input", /*input_handler*/ ctx[8], false, false, false, false);
     				mounted = true;
     			}
     		},
@@ -1281,6 +1290,10 @@ var app = (function () {
     			if (dirty & /*value*/ 16) {
     				prop_dev(textarea, "value", /*value*/ ctx[4]);
     			}
+
+    			if (dirty & /*valid*/ 64) {
+    				toggle_class(textarea, "invalid", !/*valid*/ ctx[6]);
+    			}
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(textarea);
@@ -1291,9 +1304,44 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(14:2) {#if controlType === 'textarea'}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (20:2) {#if validityMessage && !valid}
+    function create_if_block$2(ctx) {
+    	let p;
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			t = text(/*validityMessage*/ ctx[7]);
+    			attr_dev(p, "class", "error-message svelte-1teoc1z");
+    			add_location(p, file$6, 20, 4, 514);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    			append_dev(p, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*validityMessage*/ 128) set_data_dev(t, /*validityMessage*/ ctx[7]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(12:2) {#if controlType === 'textarea'}",
+    		source: "(20:2) {#if validityMessage && !valid}",
     		ctx
     	});
 
@@ -1305,14 +1353,16 @@ var app = (function () {
     	let label_1;
     	let t0;
     	let t1;
+    	let t2;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*controlType*/ ctx[0] === 'textarea') return create_if_block$2;
+    		if (/*controlType*/ ctx[0] === 'textarea') return create_if_block_1;
     		return create_else_block;
     	}
 
     	let current_block_type = select_block_type(ctx);
-    	let if_block = current_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+    	let if_block1 = /*validityMessage*/ ctx[7] && !/*valid*/ ctx[6] && create_if_block$2(ctx);
 
     	const block = {
     		c: function create() {
@@ -1320,12 +1370,14 @@ var app = (function () {
     			label_1 = element("label");
     			t0 = text(/*label*/ ctx[2]);
     			t1 = space();
-    			if_block.c();
+    			if_block0.c();
+    			t2 = space();
+    			if (if_block1) if_block1.c();
     			attr_dev(label_1, "for", /*id*/ ctx[1]);
-    			attr_dev(label_1, "class", "svelte-xzzzlr");
-    			add_location(label_1, file$6, 10, 2, 193);
-    			attr_dev(div, "class", "form-control svelte-xzzzlr");
-    			add_location(div, file$6, 9, 0, 164);
+    			attr_dev(label_1, "class", "svelte-1teoc1z");
+    			add_location(label_1, file$6, 12, 2, 255);
+    			attr_dev(div, "class", "form-control svelte-1teoc1z");
+    			add_location(div, file$6, 11, 0, 226);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1335,7 +1387,9 @@ var app = (function () {
     			append_dev(div, label_1);
     			append_dev(label_1, t0);
     			append_dev(div, t1);
-    			if_block.m(div, null);
+    			if_block0.m(div, null);
+    			append_dev(div, t2);
+    			if (if_block1) if_block1.m(div, null);
     		},
     		p: function update(ctx, [dirty]) {
     			if (dirty & /*label*/ 4) set_data_dev(t0, /*label*/ ctx[2]);
@@ -1344,23 +1398,37 @@ var app = (function () {
     				attr_dev(label_1, "for", /*id*/ ctx[1]);
     			}
 
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
+    				if_block0.p(ctx, dirty);
     			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
+    				if_block0.d(1);
+    				if_block0 = current_block_type(ctx);
 
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(div, null);
+    				if (if_block0) {
+    					if_block0.c();
+    					if_block0.m(div, t2);
     				}
+    			}
+
+    			if (/*validityMessage*/ ctx[7] && !/*valid*/ ctx[6]) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+    				} else {
+    					if_block1 = create_if_block$2(ctx);
+    					if_block1.c();
+    					if_block1.m(div, null);
+    				}
+    			} else if (if_block1) {
+    				if_block1.d(1);
+    				if_block1 = null;
     			}
     		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
-    			if_block.d();
+    			if_block0.d();
+    			if (if_block1) if_block1.d();
     		}
     	};
 
@@ -1384,6 +1452,8 @@ var app = (function () {
     	let { rows = null } = $$props;
     	let { value } = $$props;
     	let { type = 'text' } = $$props;
+    	let { valid = true } = $$props;
+    	let { validityMessage = '' } = $$props;
 
     	$$self.$$.on_mount.push(function () {
     		if (id === undefined && !('id' in $$props || $$self.$$.bound[$$self.$$.props['id']])) {
@@ -1399,7 +1469,16 @@ var app = (function () {
     		}
     	});
 
-    	const writable_props = ['controlType', 'id', 'label', 'rows', 'value', 'type'];
+    	const writable_props = [
+    		'controlType',
+    		'id',
+    		'label',
+    		'rows',
+    		'value',
+    		'type',
+    		'valid',
+    		'validityMessage'
+    	];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<TextInput> was created with unknown prop '${key}'`);
@@ -1420,6 +1499,8 @@ var app = (function () {
     		if ('rows' in $$props) $$invalidate(3, rows = $$props.rows);
     		if ('value' in $$props) $$invalidate(4, value = $$props.value);
     		if ('type' in $$props) $$invalidate(5, type = $$props.type);
+    		if ('valid' in $$props) $$invalidate(6, valid = $$props.valid);
+    		if ('validityMessage' in $$props) $$invalidate(7, validityMessage = $$props.validityMessage);
     	};
 
     	$$self.$capture_state = () => ({
@@ -1428,7 +1509,9 @@ var app = (function () {
     		label,
     		rows,
     		value,
-    		type
+    		type,
+    		valid,
+    		validityMessage
     	});
 
     	$$self.$inject_state = $$props => {
@@ -1438,13 +1521,26 @@ var app = (function () {
     		if ('rows' in $$props) $$invalidate(3, rows = $$props.rows);
     		if ('value' in $$props) $$invalidate(4, value = $$props.value);
     		if ('type' in $$props) $$invalidate(5, type = $$props.type);
+    		if ('valid' in $$props) $$invalidate(6, valid = $$props.valid);
+    		if ('validityMessage' in $$props) $$invalidate(7, validityMessage = $$props.validityMessage);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [controlType, id, label, rows, value, type, input_handler, input_handler_1];
+    	return [
+    		controlType,
+    		id,
+    		label,
+    		rows,
+    		value,
+    		type,
+    		valid,
+    		validityMessage,
+    		input_handler,
+    		input_handler_1
+    	];
     }
 
     class TextInput extends SvelteComponentDev {
@@ -1457,7 +1553,9 @@ var app = (function () {
     			label: 2,
     			rows: 3,
     			value: 4,
-    			type: 5
+    			type: 5,
+    			valid: 6,
+    			validityMessage: 7
     		});
 
     		dispatch_dev("SvelteRegisterComponent", {
@@ -1515,12 +1613,28 @@ var app = (function () {
     	set type(value) {
     		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get valid() {
+    		throw new Error("<TextInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set valid(value) {
+    		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get validityMessage() {
+    		throw new Error("<TextInput>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set validityMessage(value) {
+    		throw new Error("<TextInput>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/Meetups/EditMeetup.svelte generated by Svelte v3.59.2 */
     const file$5 = "src/Meetups/EditMeetup.svelte";
 
-    // (74:4) <Button type="submit" mode="outline" on:click={onCancel} slot="footer"       >
+    // (75:4) <Button type="submit" mode="outline" on:click={onCancel} slot="footer"       >
     function create_default_slot_2$1(ctx) {
     	let t;
 
@@ -1540,14 +1654,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$1.name,
     		type: "slot",
-    		source: "(74:4) <Button type=\\\"submit\\\" mode=\\\"outline\\\" on:click={onCancel} slot=\\\"footer\\\"       >",
+    		source: "(75:4) <Button type=\\\"submit\\\" mode=\\\"outline\\\" on:click={onCancel} slot=\\\"footer\\\"       >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:4) <Button type="submit" slot="footer">
+    // (78:4) <Button type="submit" slot="footer">
     function create_default_slot_1$1(ctx) {
     	let t;
 
@@ -1567,14 +1681,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$1.name,
     		type: "slot",
-    		source: "(77:4) <Button type=\\\"submit\\\" slot=\\\"footer\\\">",
+    		source: "(78:4) <Button type=\\\"submit\\\" slot=\\\"footer\\\">",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:0) <Modal title="Edit Meetup Data" on:cancel>
+    // (33:0) <Modal title="Edit Meetup Data" on:cancel>
     function create_default_slot$2(ctx) {
     	let form;
     	let textinput0;
@@ -1600,6 +1714,8 @@ var app = (function () {
     			props: {
     				id: "title",
     				label: "Title",
+    				valid: true,
+    				validityMessage: "Please enter a valid title.",
     				value: /*title*/ ctx[0]
     			},
     			$$inline: true
@@ -1706,7 +1822,7 @@ var app = (function () {
     			t6 = space();
     			create_component(button1.$$.fragment);
     			attr_dev(form, "class", "svelte-pps86k");
-    			add_location(form, file$5, 34, 2, 882);
+    			add_location(form, file$5, 33, 2, 655);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -1808,7 +1924,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(34:0) <Modal title=\\\"Edit Meetup Data\\\" on:cancel>",
+    		source: "(33:0) <Modal title=\\\"Edit Meetup Data\\\" on:cancel>",
     		ctx
     	});
 
@@ -1878,12 +1994,12 @@ var app = (function () {
     function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('EditMeetup', slots, []);
-    	let title = 'default title';
-    	let subtitle = 'default subtitle';
-    	let address = 'default address';
-    	let email = 'default@email.com';
-    	let description = 'default description';
-    	let imageUrl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg';
+    	let title = '';
+    	let subtitle = '';
+    	let address = '';
+    	let email = '';
+    	let description = '';
+    	let imageUrl = '';
     	const dispatch = createEventDispatcher();
 
     	function submitForm() {

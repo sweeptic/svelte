@@ -5,18 +5,34 @@
   export let rows = null;
   export let value;
   export let type = 'text';
+  export let valid = true;
+  export let validityMessage = '';
 </script>
 
 <div class="form-control">
   <label for={id}>{label}</label>
   {#if controlType === 'textarea'}
-    <textarea {rows} {id} {value} on:input />
+    <textarea class:invalid={!valid} {rows} {id} {value} on:input />
   {:else}
-    <input {type} {id} {value} on:input />
+    <input class:invalid={!valid} {type} {id} {value} on:input />
+  {/if}
+
+  {#if validityMessage && !valid}
+    <p class="error-message">{validityMessage}</p>
   {/if}
 </div>
 
 <style>
+  .invalid {
+    border-color: red;
+    background-color: #ffb3b3;
+  }
+
+  .error-message {
+    color: red;
+    margin: 0.25rem 0;
+  }
+
   input,
   textarea {
     display: block;

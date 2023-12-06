@@ -5,13 +5,12 @@
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher } from 'svelte';
 
-  let title = 'default title';
-  let subtitle = 'default subtitle';
-  let address = 'default address';
-  let email = 'default@email.com';
-  let description = 'default description';
-  let imageUrl =
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Olympic_swimming_pool_%28Tbilisi%29.jpg/800px-Olympic_swimming_pool_%28Tbilisi%29.jpg';
+  let title = '';
+  let subtitle = '';
+  let address = '';
+  let email = '';
+  let description = '';
+  let imageUrl = '';
 
   const dispatch = createEventDispatcher();
 
@@ -36,6 +35,8 @@
     <TextInput
       id="title"
       label="Title"
+      valid={true}
+      validityMessage="Please enter a valid title."
       value={title}
       on:input={(event) => (title = event.target.value)}
     />
