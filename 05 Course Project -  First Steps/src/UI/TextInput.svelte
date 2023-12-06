@@ -18,7 +18,7 @@
       class:invalid={!valid && touched}
       {rows}
       {id}
-      on:input
+      bind:value
       on:blur={() => (touched = true)}
     />
   {:else}
