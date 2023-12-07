@@ -1,6 +1,6 @@
 <script>
-  export let title;
-  export let id;
+    export let title;
+    export let id;
 </script>
 
 <h1>{title}</h1>
