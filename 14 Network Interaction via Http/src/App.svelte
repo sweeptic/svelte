@@ -1,17 +1,18 @@
 <script>
   let hobbies = [];
-  let hobbyInput = `dummyData - ${Math.random()}`;
+  let hobbyInput = `dummyData`;
+  let isLoading = false;
 
   async function addHobby() {
     hobbies = [...hobbies, hobbyInput];
-
+    isLoading = true;
     try {
       let res = await fetch(
         'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
 
         {
           method: 'POST',
-          body: JSON.stringify(hobbies),
+          body: JSON.stringify(hobbyInput + ' - ' + Math.random()),
           headers: {
             'Content-Type': ' application/json',
           },
@@ -23,6 +24,8 @@
       }
     } catch (error) {
       console.log('error', error);
+    } finally {
+      isLoading = false;
     }
   }
 </script>
@@ -33,8 +36,12 @@
 <input type="text" id="hobby" bind:value={hobbyInput} />
 <button on:click={addHobby}>Add Hobby</button>
 
-<ul>
-  {#each hobbies as hobby (Math.random())}
-    <li>{hobby}</li>
-  {/each}
-</ul>
+{#if isLoading}
+  <p>Loading...</p>
+{:else}
+  <ul>
+    {#each hobbies as hobby (Math.random())}
+      <li>{hobby}</li>
+    {/each}
+  </ul>
+{/if}

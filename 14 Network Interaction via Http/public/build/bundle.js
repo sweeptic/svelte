@@ -53,6 +53,9 @@ var app = (function () {
     function space() {
         return text(' ');
     }
+    function empty() {
+        return text('');
+    }
     function listen(node, event, handler, options) {
         node.addEventListener(event, handler, options);
         return () => node.removeEventListener(event, handler, options);
@@ -505,61 +508,15 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[4] = list[i];
+    	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
-    // (37:2) {#each hobbies as hobby (Math.random())}
-    function create_each_block(key_1, ctx) {
-    	let li;
-    	let t_value = /*hobby*/ ctx[4] + "";
-    	let t;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			li = element("li");
-    			t = text(t_value);
-    			add_location(li, file, 37, 4, 898);
-    			this.first = li;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, li, anchor);
-    			append_dev(li, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			if (dirty & /*hobbies*/ 1 && t_value !== (t_value = /*hobby*/ ctx[4] + "")) set_data_dev(t, t_value);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(li);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(37:2) {#each hobbies as hobby (Math.random())}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    function create_fragment(ctx) {
-    	let label;
-    	let t0;
-    	let input;
-    	let t1;
-    	let button;
-    	let t3;
+    // (41:0) {:else}
+    function create_else_block(ctx) {
     	let ul;
     	let each_blocks = [];
     	let each_1_lookup = new Map();
-    	let mounted;
-    	let dispose;
     	let each_value = /*hobbies*/ ctx[0];
     	validate_each_argument(each_value);
     	const get_key = ctx => Math.random();
@@ -573,6 +530,141 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
+    			ul = element("ul");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			add_location(ul, file, 41, 2, 987);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, ul, anchor);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				if (each_blocks[i]) {
+    					each_blocks[i].m(ul, null);
+    				}
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*hobbies*/ 1) {
+    				each_value = /*hobbies*/ ctx[0];
+    				validate_each_argument(each_value);
+    				validate_each_keys(ctx, each_value, get_each_context, get_key);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, ul, destroy_block, create_each_block, null, get_each_context);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(ul);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].d();
+    			}
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(41:0) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (39:0) {#if isLoading}
+    function create_if_block(ctx) {
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			p = element("p");
+    			p.textContent = "Loading...";
+    			add_location(p, file, 39, 2, 959);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, p, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(p);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(39:0) {#if isLoading}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (43:4) {#each hobbies as hobby (Math.random())}
+    function create_each_block(key_1, ctx) {
+    	let li;
+    	let t_value = /*hobby*/ ctx[5] + "";
+    	let t;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			li = element("li");
+    			t = text(t_value);
+    			add_location(li, file, 43, 6, 1043);
+    			this.first = li;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			append_dev(li, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			if (dirty & /*hobbies*/ 1 && t_value !== (t_value = /*hobby*/ ctx[5] + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(43:4) {#each hobbies as hobby (Math.random())}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment(ctx) {
+    	let label;
+    	let t0;
+    	let input;
+    	let t1;
+    	let button;
+    	let t3;
+    	let if_block_anchor;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*isLoading*/ ctx[2]) return create_if_block;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
     			label = element("label");
     			t0 = space();
     			input = element("input");
@@ -580,19 +672,14 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Add Hobby";
     			t3 = space();
-    			ul = element("ul");
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].c();
-    			}
-
+    			if_block.c();
+    			if_block_anchor = empty();
     			attr_dev(label, "for", "hobby");
-    			add_location(label, file, 31, 0, 713);
+    			add_location(label, file, 34, 0, 808);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "hobby");
-    			add_location(input, file, 32, 0, 741);
-    			add_location(button, file, 33, 0, 798);
-    			add_location(ul, file, 35, 0, 846);
+    			add_location(input, file, 35, 0, 836);
+    			add_location(button, file, 36, 0, 893);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -605,18 +692,13 @@ var app = (function () {
     			insert_dev(target, t1, anchor);
     			insert_dev(target, button, anchor);
     			insert_dev(target, t3, anchor);
-    			insert_dev(target, ul, anchor);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				if (each_blocks[i]) {
-    					each_blocks[i].m(ul, null);
-    				}
-    			}
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[3]),
-    					listen_dev(button, "click", /*addHobby*/ ctx[2], false, false, false, false)
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
+    					listen_dev(button, "click", /*addHobby*/ ctx[3], false, false, false, false)
     				];
 
     				mounted = true;
@@ -627,11 +709,16 @@ var app = (function () {
     				set_input_value(input, /*hobbyInput*/ ctx[1]);
     			}
 
-    			if (dirty & /*hobbies*/ 1) {
-    				each_value = /*hobbies*/ ctx[0];
-    				validate_each_argument(each_value);
-    				validate_each_keys(ctx, each_value, get_each_context, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, ul, destroy_block, create_each_block, null, get_each_context);
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
     			}
     		},
     		i: noop,
@@ -643,12 +730,8 @@ var app = (function () {
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(button);
     			if (detaching) detach_dev(t3);
-    			if (detaching) detach_dev(ul);
-
-    			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
-    			}
-
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -669,15 +752,17 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let hobbies = [];
-    	let hobbyInput = `dummyData - ${Math.random()}`;
+    	let hobbyInput = `dummyData`;
+    	let isLoading = false;
 
     	async function addHobby() {
     		$$invalidate(0, hobbies = [...hobbies, hobbyInput]);
+    		$$invalidate(2, isLoading = true);
 
     		try {
     			let res = await fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', {
     				method: 'POST',
-    				body: JSON.stringify(hobbies),
+    				body: JSON.stringify(hobbyInput + ' - ' + Math.random()),
     				headers: { 'Content-Type': ' application/json' }
     			});
 
@@ -686,6 +771,8 @@ var app = (function () {
     			}
     		} catch(error) {
     			console.log('error', error);
+    		} finally {
+    			$$invalidate(2, isLoading = false);
     		}
     	}
 
@@ -700,18 +787,19 @@ var app = (function () {
     		$$invalidate(1, hobbyInput);
     	}
 
-    	$$self.$capture_state = () => ({ hobbies, hobbyInput, addHobby });
+    	$$self.$capture_state = () => ({ hobbies, hobbyInput, isLoading, addHobby });
 
     	$$self.$inject_state = $$props => {
     		if ('hobbies' in $$props) $$invalidate(0, hobbies = $$props.hobbies);
     		if ('hobbyInput' in $$props) $$invalidate(1, hobbyInput = $$props.hobbyInput);
+    		if ('isLoading' in $$props) $$invalidate(2, isLoading = $$props.isLoading);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [hobbies, hobbyInput, addHobby, input_input_handler];
+    	return [hobbies, hobbyInput, isLoading, addHobby, input_input_handler];
     }
 
     class App extends SvelteComponentDev {
