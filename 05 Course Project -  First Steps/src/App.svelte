@@ -1,4 +1,5 @@
 <script>
+  import Error from './UI/Error.svelte';
   import MeetupDetail from './Meetups/MeetupDetail.svelte';
   import EditMeetup from './Meetups/EditMeetup.svelte';
   import Button from './UI/Button.svelte';
@@ -12,6 +13,7 @@
   let page = 'overview';
   let pageData = {};
   let isLoading = true;
+  let error;
 
   fetch(
     'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
@@ -40,6 +42,7 @@
     })
     .catch((err) => {
       console.log('err', err);
+      error = err;
       isLoading = false;
     });
 
@@ -67,7 +70,15 @@
     editMode = 'edit';
     editedId = event.detail;
   }
+
+  function clearError() {
+    error = undefined;
+  }
 </script>
+
+{#if error}
+  <Error message={error.message} on:cancel={clearError} />
+{/if}
 
 <Header />
 

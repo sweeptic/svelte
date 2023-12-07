@@ -14,7 +14,10 @@
   export let id;
   export let isFav;
 
+  let isLoading = false;
+
   function toggleFavorite() {
+    isLoading = true;
     fetch(
       `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
       {
@@ -27,6 +30,7 @@
         if (!res.ok) {
           throw new Error('Failed!');
         }
+        isLoading = false;
         meetups.toggleFavorite(id);
       })
 
@@ -59,13 +63,19 @@
     <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}
       >Edit</Button
     >
-    <Button
-      mode="outline"
-      color={isFav ? null : 'success'}
-      type="button"
-      on:click={toggleFavorite}
-      on:mouseLeave>{isFav ? 'Unfavorite' : 'Favorite'}</Button
-    >
+
+    {#if isLoading}
+      <span>Changing...</span>
+    {:else}
+      <Button
+        mode="outline"
+        color={isFav ? null : 'success'}
+        type="button"
+        on:click={toggleFavorite}
+        on:mouseLeave>{isFav ? 'Unfavorite' : 'Favorite'}</Button
+      >
+    {/if}
+
     <Button type="button" on:click={dispatch('showdetails', id)}
       >Show Details</Button
     >

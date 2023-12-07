@@ -58,7 +58,7 @@
 
     if (id) {
       fetch(
-        `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
+        `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatxxxxxabase.app/meetups/${id}.json`,
         {
           method: 'PATCH',
           body: JSON.stringify(meetupData),
