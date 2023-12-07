@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import hobbyStore from './hobby-store';
 
   let hobbies = [];
   let hobbyInput;
@@ -17,14 +18,7 @@
     })
     .then((data) => {
       isLoading = false;
-      hobbies = Object.values(data);
-      let keys = Object.keys(data);
-      console.log(keys);
-
-      for (const key in data) {
-        console.log(key, data[key]);
-      }
-      return hobbies;
+      hobbyStore.setHobbies(Object.values(data));
     })
     .catch((err) => {
       isLoading = false;
@@ -64,17 +58,17 @@
 <input type="text" id="hobby" bind:this={hobbyInput} />
 <button on:click={addHobby}>Add Hobby</button>
 
-<!-- {#if isLoading}
+{#if isLoading}
   <p>Loading...</p>
 {:else}
   <ul>
-    {#each hobbies as hobby}
+    {#each $hobbyStore as hobby}
       <li>{hobby}</li>
     {/each}
   </ul>
-{/if} -->
+{/if}
 
-{#await getHobbies}
+<!-- {#await getHobbies}
   <p>Loading...</p>
 {:then hobbyData}
   <ul>
@@ -84,4 +78,4 @@
   </ul>
 {:catch error}
   <p>{error.message}</p>
-{/await}
+{/await} -->

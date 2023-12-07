@@ -4,11 +4,6 @@ var app = (function () {
     'use strict';
 
     function noop() { }
-    // Adapted from https://github.com/then/is-promise/blob/master/index.js
-    // Distributed under MIT License https://github.com/then/is-promise/blob/master/LICENSE
-    function is_promise(value) {
-        return !!value && (typeof value === 'object' || typeof value === 'function') && typeof value.then === 'function';
-    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -31,6 +26,21 @@ var app = (function () {
     }
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
+    }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
     }
 
     const globals = (typeof window !== 'undefined'
@@ -214,126 +224,11 @@ var app = (function () {
         render_callbacks = filtered;
     }
     const outroing = new Set();
-    let outros;
-    function group_outros() {
-        outros = {
-            r: 0,
-            c: [],
-            p: outros // parent group
-        };
-    }
-    function check_outros() {
-        if (!outros.r) {
-            run_all(outros.c);
-        }
-        outros = outros.p;
-    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
             block.i(local);
         }
-    }
-    function transition_out(block, local, detach, callback) {
-        if (block && block.o) {
-            if (outroing.has(block))
-                return;
-            outroing.add(block);
-            outros.c.push(() => {
-                outroing.delete(block);
-                if (callback) {
-                    if (detach)
-                        block.d(1);
-                    callback();
-                }
-            });
-            block.o(local);
-        }
-        else if (callback) {
-            callback();
-        }
-    }
-
-    function handle_promise(promise, info) {
-        const token = info.token = {};
-        function update(type, index, key, value) {
-            if (info.token !== token)
-                return;
-            info.resolved = value;
-            let child_ctx = info.ctx;
-            if (key !== undefined) {
-                child_ctx = child_ctx.slice();
-                child_ctx[key] = value;
-            }
-            const block = type && (info.current = type)(child_ctx);
-            let needs_flush = false;
-            if (info.block) {
-                if (info.blocks) {
-                    info.blocks.forEach((block, i) => {
-                        if (i !== index && block) {
-                            group_outros();
-                            transition_out(block, 1, 1, () => {
-                                if (info.blocks[i] === block) {
-                                    info.blocks[i] = null;
-                                }
-                            });
-                            check_outros();
-                        }
-                    });
-                }
-                else {
-                    info.block.d(1);
-                }
-                block.c();
-                transition_in(block, 1);
-                block.m(info.mount(), info.anchor);
-                needs_flush = true;
-            }
-            info.block = block;
-            if (info.blocks)
-                info.blocks[index] = block;
-            if (needs_flush) {
-                flush();
-            }
-        }
-        if (is_promise(promise)) {
-            const current_component = get_current_component();
-            promise.then(value => {
-                set_current_component(current_component);
-                update(info.then, 1, info.value, value);
-                set_current_component(null);
-            }, error => {
-                set_current_component(current_component);
-                update(info.catch, 2, info.error, error);
-                set_current_component(null);
-                if (!info.hasCatch) {
-                    throw error;
-                }
-            });
-            // if we previously had a then/catch block, destroy it
-            if (info.current !== info.pending) {
-                update(info.pending, 0);
-                return true;
-            }
-        }
-        else {
-            if (info.current !== info.then) {
-                update(info.then, 1, info.value, promise);
-                return true;
-            }
-            info.resolved = promise;
-        }
-    }
-    function update_await_block_branch(info, ctx, dirty) {
-        const child_ctx = ctx.slice();
-        const { resolved } = info;
-        if (info.current === info.then) {
-            child_ctx[info.value] = resolved;
-        }
-        if (info.current === info.catch) {
-            child_ctx[info.error] = resolved;
-        }
-        info.block.p(child_ctx, dirty);
     }
     function mount_component(component, target, anchor, customElement) {
         const { fragment, after_update } = component.$$;
@@ -505,6 +400,13 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
+    function set_data_dev(text, data) {
+        data = '' + data;
+        if (text.data === data)
+            return;
+        dispatch_dev('SvelteDOMSetData', { node: text, data });
+        text.data = data;
+    }
     function validate_each_argument(arg) {
         if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
             let msg = '{#each} only iterates over array-like objects.';
@@ -541,6 +443,68 @@ var app = (function () {
         $inject_state() { }
     }
 
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=} start
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = new Set();
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (const subscriber of subscribers) {
+                        subscriber[1]();
+                        subscriber_queue.push(subscriber, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.add(subscriber);
+            if (subscribers.size === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                subscribers.delete(subscriber);
+                if (subscribers.size === 0 && stop) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    const hobbies = writable();
+
+    const customStore = {
+        subscribe: hobbies.subscribe,
+        setHobbies: (items) => {
+            hobbies.set(items);
+        },
+        addHobby: (hobby) => {
+            hobbies.update((items) => {
+                return items.concat(hobby);
+            });
+        }
+    };
+
     /* src/App.svelte generated by Svelte v3.59.2 */
 
     const { Error: Error_1, Object: Object_1, console: console_1 } = globals;
@@ -552,43 +516,10 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (85:0) {:catch error}
-    function create_catch_block(ctx) {
-    	let p;
-    	let t_value = /*error*/ ctx[10].message + "";
-    	let t;
-
-    	const block = {
-    		c: function create() {
-    			p = element("p");
-    			t = text(t_value);
-    			add_location(p, file, 85, 2, 1802);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, p, anchor);
-    			append_dev(p, t);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(p);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_catch_block.name,
-    		type: "catch",
-    		source: "(85:0) {:catch error}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (79:0) {:then hobbyData}
-    function create_then_block(ctx) {
+    // (63:0) {:else}
+    function create_else_block(ctx) {
     	let ul;
-    	let each_value = /*hobbyData*/ ctx[6];
+    	let each_value = /*$hobbyStore*/ ctx[2];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -604,7 +535,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(ul, file, 79, 2, 1706);
+    			add_location(ul, file, 63, 2, 1447);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -616,8 +547,8 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*getHobbies*/ 2) {
-    				each_value = /*hobbyData*/ ctx[6];
+    			if (dirty & /*$hobbyStore*/ 4) {
+    				each_value = /*$hobbyStore*/ ctx[2];
     				validate_each_argument(each_value);
     				let i;
 
@@ -648,57 +579,24 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_then_block.name,
-    		type: "then",
-    		source: "(79:0) {:then hobbyData}",
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(63:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (81:4) {#each hobbyData as hobby}
-    function create_each_block(ctx) {
-    	let li;
-    	let t_value = /*hobby*/ ctx[7] + "";
-    	let t;
-
-    	const block = {
-    		c: function create() {
-    			li = element("li");
-    			t = text(t_value);
-    			add_location(li, file, 81, 6, 1748);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, li, anchor);
-    			append_dev(li, t);
-    		},
-    		p: noop,
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(li);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(81:4) {#each hobbyData as hobby}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (77:19)    <p>Loading...</p> {:then hobbyData}
-    function create_pending_block(ctx) {
+    // (61:0) {#if isLoading}
+    function create_if_block(ctx) {
     	let p;
 
     	const block = {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file, 77, 2, 1668);
+    			add_location(p, file, 61, 2, 1419);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -711,9 +609,44 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_pending_block.name,
-    		type: "pending",
-    		source: "(77:19)    <p>Loading...</p> {:then hobbyData}",
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(61:0) {#if isLoading}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (65:4) {#each $hobbyStore as hobby}
+    function create_each_block(ctx) {
+    	let li;
+    	let t_value = /*hobby*/ ctx[7] + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			li = element("li");
+    			t = text(t_value);
+    			add_location(li, file, 65, 6, 1491);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			append_dev(li, t);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$hobbyStore*/ 4 && t_value !== (t_value = /*hobby*/ ctx[7] + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(65:4) {#each $hobbyStore as hobby}",
     		ctx
     	});
 
@@ -727,23 +660,17 @@ var app = (function () {
     	let t2;
     	let button;
     	let t4;
-    	let await_block_anchor;
+    	let if_block_anchor;
     	let mounted;
     	let dispose;
 
-    	let info = {
-    		ctx,
-    		current: null,
-    		token: null,
-    		hasCatch: true,
-    		pending: create_pending_block,
-    		then: create_then_block,
-    		catch: create_catch_block,
-    		value: 6,
-    		error: 10
-    	};
+    	function select_block_type(ctx, dirty) {
+    		if (/*isLoading*/ ctx[1]) return create_if_block;
+    		return create_else_block;
+    	}
 
-    	handle_promise(/*getHobbies*/ ctx[1], info);
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
@@ -755,14 +682,14 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Add Hobby";
     			t4 = space();
-    			await_block_anchor = empty();
-    			info.block.c();
+    			if_block.c();
+    			if_block_anchor = empty();
     			attr_dev(label, "for", "hobby");
-    			add_location(label, file, 62, 0, 1370);
+    			add_location(label, file, 56, 0, 1264);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "hobby");
-    			add_location(input, file, 63, 0, 1403);
-    			add_location(button, file, 64, 0, 1459);
+    			add_location(input, file, 57, 0, 1297);
+    			add_location(button, file, 58, 0, 1353);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -771,23 +698,30 @@ var app = (function () {
     			insert_dev(target, label, anchor);
     			insert_dev(target, t1, anchor);
     			insert_dev(target, input, anchor);
-    			/*input_binding*/ ctx[3](input);
+    			/*input_binding*/ ctx[4](input);
     			insert_dev(target, t2, anchor);
     			insert_dev(target, button, anchor);
     			insert_dev(target, t4, anchor);
-    			insert_dev(target, await_block_anchor, anchor);
-    			info.block.m(target, info.anchor = anchor);
-    			info.mount = () => await_block_anchor.parentNode;
-    			info.anchor = await_block_anchor;
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*addHobby*/ ctx[2], false, false, false, false);
+    				dispose = listen_dev(button, "click", /*addHobby*/ ctx[3], false, false, false, false);
     				mounted = true;
     			}
     		},
-    		p: function update(new_ctx, [dirty]) {
-    			ctx = new_ctx;
-    			update_await_block_branch(info, ctx, dirty);
+    		p: function update(ctx, [dirty]) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			}
     		},
     		i: noop,
     		o: noop,
@@ -795,14 +729,12 @@ var app = (function () {
     			if (detaching) detach_dev(label);
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(input);
-    			/*input_binding*/ ctx[3](null);
+    			/*input_binding*/ ctx[4](null);
     			if (detaching) detach_dev(t2);
     			if (detaching) detach_dev(button);
     			if (detaching) detach_dev(t4);
-    			if (detaching) detach_dev(await_block_anchor);
-    			info.block.d(detaching);
-    			info.token = null;
-    			info = null;
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
     			mounted = false;
     			dispose();
     		}
@@ -820,6 +752,9 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let $hobbyStore;
+    	validate_store(customStore, 'hobbyStore');
+    	component_subscribe($$self, customStore, $$value => $$invalidate(2, $hobbyStore = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let hobbies = [];
@@ -834,31 +769,23 @@ var app = (function () {
 
     		return res.json();
     	}).then(data => {
-    		isLoading = false;
-    		hobbies = Object.values(data);
-    		let keys = Object.keys(data);
-    		console.log(keys);
-
-    		for (const key in data) {
-    			console.log(key, data[key]);
-    		}
-
-    		return hobbies;
+    		$$invalidate(1, isLoading = false);
+    		customStore.setHobbies(Object.values(data));
     	}).catch(err => {
-    		isLoading = false;
+    		$$invalidate(1, isLoading = false);
     		console.log(err);
     	});
 
     	function addHobby() {
     		hobbies = [...hobbies, hobbyInput.value];
-    		isLoading = true;
+    		$$invalidate(1, isLoading = true);
 
     		fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', {
     			method: 'POST',
     			body: JSON.stringify(hobbyInput.value),
     			headers: { 'Content-Type': 'application/json' }
     		}).then(res => {
-    			isLoading = false;
+    			$$invalidate(1, isLoading = false);
 
     			if (!res.ok) {
     				throw new Error('Failed!');
@@ -867,7 +794,7 @@ var app = (function () {
     			// ...
     			alert('Saved Data!');
     		}).catch(err => {
-    			isLoading = false;
+    			$$invalidate(1, isLoading = false);
     			console.log(err);
     		});
     	}
@@ -887,25 +814,27 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		onMount,
+    		hobbyStore: customStore,
     		hobbies,
     		hobbyInput,
     		isLoading,
     		getHobbies,
-    		addHobby
+    		addHobby,
+    		$hobbyStore
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('hobbies' in $$props) hobbies = $$props.hobbies;
     		if ('hobbyInput' in $$props) $$invalidate(0, hobbyInput = $$props.hobbyInput);
-    		if ('isLoading' in $$props) isLoading = $$props.isLoading;
-    		if ('getHobbies' in $$props) $$invalidate(1, getHobbies = $$props.getHobbies);
+    		if ('isLoading' in $$props) $$invalidate(1, isLoading = $$props.isLoading);
+    		if ('getHobbies' in $$props) getHobbies = $$props.getHobbies;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [hobbyInput, getHobbies, addHobby, input_binding];
+    	return [hobbyInput, isLoading, $hobbyStore, addHobby, input_binding];
     }
 
     class App extends SvelteComponentDev {
