@@ -5,18 +5,18 @@
   let hobbyInput = `dummyData`;
   let isLoading = false;
 
-  onMount(() => {
-    async function loadData() {
-      let data = await fetch(
-        'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
-        { method: 'GET' },
-      );
+  //   onMount(() => {
+  // async function loadData() {
+  let data = fetch(
+    'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
+    { method: 'GET' },
+  );
 
-      let respData = await data.json();
-      hobbies = Object.values(respData);
-    }
-    loadData();
-  });
+  //   let respData = await data.json();
+  //   hobbies = Object.values(respData);
+  // }
+  // loadData();
+  //   });
 
   async function addHobby() {
     hobbies = [...hobbies, hobbyInput];
@@ -51,7 +51,7 @@
 <input type="text" id="hobby" bind:value={hobbyInput} />
 <button on:click={addHobby}>Add Hobby</button>
 
-{#if isLoading}
+<!-- {#if isLoading}
   <p>Loading...</p>
 {:else}
   <ul>
@@ -59,4 +59,15 @@
       <li>{hobby}</li>
     {/each}
   </ul>
-{/if}
+{/if} -->
+
+{#await data}
+  <p>Loading...</p>
+  <!-- promise is pending -->
+{:then hobbyData}
+  {#each hobbyData as hobby (Math.random())}
+    <li>{hobby}</li>
+  {/each}
+{:catch error}
+  <!-- promise was rejected -->
+{/await}

@@ -4,6 +4,11 @@ var app = (function () {
     'use strict';
 
     function noop() { }
+    // Adapted from https://github.com/then/is-promise/blob/master/index.js
+    // Distributed under MIT License https://github.com/then/is-promise/blob/master/LICENSE
+    function is_promise(value) {
+        return !!value && (typeof value === 'object' || typeof value === 'function') && typeof value.then === 'function';
+    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -206,11 +211,126 @@ var app = (function () {
         render_callbacks = filtered;
     }
     const outroing = new Set();
+    let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
     function transition_in(block, local) {
         if (block && block.i) {
             outroing.delete(block);
             block.i(local);
         }
+    }
+    function transition_out(block, local, detach, callback) {
+        if (block && block.o) {
+            if (outroing.has(block))
+                return;
+            outroing.add(block);
+            outros.c.push(() => {
+                outroing.delete(block);
+                if (callback) {
+                    if (detach)
+                        block.d(1);
+                    callback();
+                }
+            });
+            block.o(local);
+        }
+        else if (callback) {
+            callback();
+        }
+    }
+
+    function handle_promise(promise, info) {
+        const token = info.token = {};
+        function update(type, index, key, value) {
+            if (info.token !== token)
+                return;
+            info.resolved = value;
+            let child_ctx = info.ctx;
+            if (key !== undefined) {
+                child_ctx = child_ctx.slice();
+                child_ctx[key] = value;
+            }
+            const block = type && (info.current = type)(child_ctx);
+            let needs_flush = false;
+            if (info.block) {
+                if (info.blocks) {
+                    info.blocks.forEach((block, i) => {
+                        if (i !== index && block) {
+                            group_outros();
+                            transition_out(block, 1, 1, () => {
+                                if (info.blocks[i] === block) {
+                                    info.blocks[i] = null;
+                                }
+                            });
+                            check_outros();
+                        }
+                    });
+                }
+                else {
+                    info.block.d(1);
+                }
+                block.c();
+                transition_in(block, 1);
+                block.m(info.mount(), info.anchor);
+                needs_flush = true;
+            }
+            info.block = block;
+            if (info.blocks)
+                info.blocks[index] = block;
+            if (needs_flush) {
+                flush();
+            }
+        }
+        if (is_promise(promise)) {
+            const current_component = get_current_component();
+            promise.then(value => {
+                set_current_component(current_component);
+                update(info.then, 1, info.value, value);
+                set_current_component(null);
+            }, error => {
+                set_current_component(current_component);
+                update(info.catch, 2, info.error, error);
+                set_current_component(null);
+                if (!info.hasCatch) {
+                    throw error;
+                }
+            });
+            // if we previously had a then/catch block, destroy it
+            if (info.current !== info.pending) {
+                update(info.pending, 0);
+                return true;
+            }
+        }
+        else {
+            if (info.current !== info.then) {
+                update(info.then, 1, info.value, promise);
+                return true;
+            }
+            info.resolved = promise;
+        }
+    }
+    function update_await_block_branch(info, ctx, dirty) {
+        const child_ctx = ctx.slice();
+        const { resolved } = info;
+        if (info.current === info.then) {
+            child_ctx[info.value] = resolved;
+        }
+        if (info.current === info.catch) {
+            child_ctx[info.error] = resolved;
+        }
+        info.block.p(child_ctx, dirty);
     }
 
     function destroy_block(block, lookup) {
@@ -475,13 +595,6 @@ var app = (function () {
         else
             dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
     }
-    function set_data_dev(text, data) {
-        data = '' + data;
-        if (text.data === data)
-            return;
-        dispatch_dev('SvelteDOMSetData', { node: text, data });
-        text.data = data;
-    }
     function validate_each_argument(arg) {
         if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
             let msg = '{#each} only iterates over array-like objects.';
@@ -520,21 +633,36 @@ var app = (function () {
 
     /* src/App.svelte generated by Svelte v3.59.2 */
 
-    const { Object: Object_1, console: console_1 } = globals;
+    const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
-    // (56:0) {:else}
-    function create_else_block(ctx) {
-    	let ul;
+    // (71:0) {:catch error}
+    function create_catch_block(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block.name,
+    		type: "catch",
+    		source: "(71:0) {:catch error}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (67:0) {:then hobbyData}
+    function create_then_block(ctx) {
     	let each_blocks = [];
     	let each_1_lookup = new Map();
-    	let each_value = /*hobbies*/ ctx[0];
+    	let each_1_anchor;
+    	let each_value = /*hobbyData*/ ctx[6];
     	validate_each_argument(each_value);
     	const get_key = ctx => Math.random();
     	validate_each_keys(ctx, each_value, get_each_context, get_key);
@@ -547,60 +675,96 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			ul = element("ul");
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			add_location(ul, file, 56, 2, 1358);
+    			each_1_anchor = empty();
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, ul, anchor);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				if (each_blocks[i]) {
-    					each_blocks[i].m(ul, null);
+    					each_blocks[i].m(target, anchor);
     				}
     			}
+
+    			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*hobbies*/ 1) {
-    				each_value = /*hobbies*/ ctx[0];
+    			if (dirty & /*data*/ 2) {
+    				each_value = /*hobbyData*/ ctx[6];
     				validate_each_argument(each_value);
     				validate_each_keys(ctx, each_value, get_each_context, get_key);
-    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, ul, destroy_block, create_each_block, null, get_each_context);
+    				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, each_1_anchor.parentNode, destroy_block, create_each_block, each_1_anchor, get_each_context);
     			}
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(ul);
-
     			for (let i = 0; i < each_blocks.length; i += 1) {
-    				each_blocks[i].d();
+    				each_blocks[i].d(detaching);
     			}
+
+    			if (detaching) detach_dev(each_1_anchor);
     		}
     	};
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(56:0) {:else}",
+    		id: create_then_block.name,
+    		type: "then",
+    		source: "(67:0) {:then hobbyData}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (54:0) {#if isLoading}
-    function create_if_block(ctx) {
+    // (68:2) {#each hobbyData as hobby (Math.random())}
+    function create_each_block(key_1, ctx) {
+    	let li;
+    	let t_value = /*hobby*/ ctx[7] + "";
+    	let t;
+
+    	const block = {
+    		key: key_1,
+    		first: null,
+    		c: function create() {
+    			li = element("li");
+    			t = text(t_value);
+    			add_location(li, file, 68, 4, 1591);
+    			this.first = li;
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			append_dev(li, t);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(68:2) {#each hobbyData as hobby (Math.random())}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (64:13)    <p>Loading...</p>   <!-- promise is pending --> {:then hobbyData}
+    function create_pending_block(ctx) {
     	let p;
 
     	const block = {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file, 54, 2, 1330);
+    			add_location(p, file, 64, 2, 1476);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -613,48 +777,9 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block.name,
-    		type: "if",
-    		source: "(54:0) {#if isLoading}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (58:4) {#each hobbies as hobby (Math.random())}
-    function create_each_block(key_1, ctx) {
-    	let li;
-    	let t_value = /*hobby*/ ctx[5] + "";
-    	let t;
-
-    	const block = {
-    		key: key_1,
-    		first: null,
-    		c: function create() {
-    			li = element("li");
-    			t = text(t_value);
-    			add_location(li, file, 58, 6, 1414);
-    			this.first = li;
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, li, anchor);
-    			append_dev(li, t);
-    		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-    			if (dirty & /*hobbies*/ 1 && t_value !== (t_value = /*hobby*/ ctx[5] + "")) set_data_dev(t, t_value);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(li);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_each_block.name,
-    		type: "each",
-    		source: "(58:4) {#each hobbies as hobby (Math.random())}",
+    		id: create_pending_block.name,
+    		type: "pending",
+    		source: "(64:13)    <p>Loading...</p>   <!-- promise is pending --> {:then hobbyData}",
     		ctx
     	});
 
@@ -668,17 +793,23 @@ var app = (function () {
     	let t1;
     	let button;
     	let t3;
-    	let if_block_anchor;
+    	let await_block_anchor;
     	let mounted;
     	let dispose;
 
-    	function select_block_type(ctx, dirty) {
-    		if (/*isLoading*/ ctx[2]) return create_if_block;
-    		return create_else_block;
-    	}
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: true,
+    		pending: create_pending_block,
+    		then: create_then_block,
+    		catch: create_catch_block,
+    		value: 6,
+    		error: 10
+    	};
 
-    	let current_block_type = select_block_type(ctx);
-    	let if_block = current_block_type(ctx);
+    	handle_promise(/*data*/ ctx[1], info);
 
     	const block = {
     		c: function create() {
@@ -689,14 +820,14 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Add Hobby";
     			t3 = space();
-    			if_block.c();
-    			if_block_anchor = empty();
+    			await_block_anchor = empty();
+    			info.block.c();
     			attr_dev(label, "for", "hobby");
-    			add_location(label, file, 49, 0, 1179);
+    			add_location(label, file, 49, 0, 1172);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "hobby");
-    			add_location(input, file, 50, 0, 1207);
-    			add_location(button, file, 51, 0, 1264);
+    			add_location(input, file, 50, 0, 1200);
+    			add_location(button, file, 51, 0, 1257);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -705,38 +836,32 @@ var app = (function () {
     			insert_dev(target, label, anchor);
     			insert_dev(target, t0, anchor);
     			insert_dev(target, input, anchor);
-    			set_input_value(input, /*hobbyInput*/ ctx[1]);
+    			set_input_value(input, /*hobbyInput*/ ctx[0]);
     			insert_dev(target, t1, anchor);
     			insert_dev(target, button, anchor);
     			insert_dev(target, t3, anchor);
-    			if_block.m(target, anchor);
-    			insert_dev(target, if_block_anchor, anchor);
+    			insert_dev(target, await_block_anchor, anchor);
+    			info.block.m(target, info.anchor = anchor);
+    			info.mount = () => await_block_anchor.parentNode;
+    			info.anchor = await_block_anchor;
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
-    					listen_dev(button, "click", /*addHobby*/ ctx[3], false, false, false, false)
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[3]),
+    					listen_dev(button, "click", /*addHobby*/ ctx[2], false, false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*hobbyInput*/ 2 && input.value !== /*hobbyInput*/ ctx[1]) {
-    				set_input_value(input, /*hobbyInput*/ ctx[1]);
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*hobbyInput*/ 1 && input.value !== /*hobbyInput*/ ctx[0]) {
+    				set_input_value(input, /*hobbyInput*/ ctx[0]);
     			}
 
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
-    				if (if_block) {
-    					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
-    				}
-    			}
+    			update_await_block_branch(info, ctx, dirty);
     		},
     		i: noop,
     		o: noop,
@@ -747,8 +872,10 @@ var app = (function () {
     			if (detaching) detach_dev(t1);
     			if (detaching) detach_dev(button);
     			if (detaching) detach_dev(t3);
-    			if_block.d(detaching);
-    			if (detaching) detach_dev(if_block_anchor);
+    			if (detaching) detach_dev(await_block_anchor);
+    			info.block.d(detaching);
+    			info.token = null;
+    			info = null;
     			mounted = false;
     			run_all(dispose);
     		}
@@ -772,19 +899,18 @@ var app = (function () {
     	let hobbyInput = `dummyData`;
     	let isLoading = false;
 
-    	onMount(() => {
-    		async function loadData() {
-    			let data = await fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', { method: 'GET' });
-    			let respData = await data.json();
-    			$$invalidate(0, hobbies = Object.values(respData));
-    		}
+    	//   onMount(() => {
+    	// async function loadData() {
+    	let data = fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', { method: 'GET' });
 
-    		loadData();
-    	});
-
+    	//   let respData = await data.json();
+    	//   hobbies = Object.values(respData);
+    	// }
+    	// loadData();
+    	//   });
     	async function addHobby() {
-    		$$invalidate(0, hobbies = [...hobbies, hobbyInput]);
-    		$$invalidate(2, isLoading = true);
+    		hobbies = [...hobbies, hobbyInput];
+    		isLoading = true;
 
     		try {
     			let res = await fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', {
@@ -799,19 +925,19 @@ var app = (function () {
     		} catch(error) {
     			console.log('error', error);
     		} finally {
-    			$$invalidate(2, isLoading = false);
+    			isLoading = false;
     		}
     	}
 
     	const writable_props = [];
 
-    	Object_1.keys($$props).forEach(key => {
+    	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
     	function input_input_handler() {
     		hobbyInput = this.value;
-    		$$invalidate(1, hobbyInput);
+    		$$invalidate(0, hobbyInput);
     	}
 
     	$$self.$capture_state = () => ({
@@ -819,20 +945,22 @@ var app = (function () {
     		hobbies,
     		hobbyInput,
     		isLoading,
+    		data,
     		addHobby
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('hobbies' in $$props) $$invalidate(0, hobbies = $$props.hobbies);
-    		if ('hobbyInput' in $$props) $$invalidate(1, hobbyInput = $$props.hobbyInput);
-    		if ('isLoading' in $$props) $$invalidate(2, isLoading = $$props.isLoading);
+    		if ('hobbies' in $$props) hobbies = $$props.hobbies;
+    		if ('hobbyInput' in $$props) $$invalidate(0, hobbyInput = $$props.hobbyInput);
+    		if ('isLoading' in $$props) isLoading = $$props.isLoading;
+    		if ('data' in $$props) $$invalidate(1, data = $$props.data);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [hobbies, hobbyInput, isLoading, addHobby, input_input_handler];
+    	return [hobbyInput, data, addHobby, input_input_handler];
     }
 
     class App extends SvelteComponentDev {
