@@ -1,19 +1,22 @@
 <script>
+  import { onMount } from 'svelte';
+
   let hobbies = [];
   let hobbyInput = `dummyData`;
   let isLoading = false;
 
-  async function loadData() {
-    let data = await fetch(
-      'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
-      { method: 'GET' },
-    );
+  onMount(() => {
+    async function loadData() {
+      let data = await fetch(
+        'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
+        { method: 'GET' },
+      );
 
-    let respData = await data.json();
-    hobbies = Object.values(respData);
-  }
-
-  loadData();
+      let respData = await data.json();
+      hobbies = Object.values(respData);
+    }
+    loadData();
+  });
 
   async function addHobby() {
     hobbies = [...hobbies, hobbyInput];

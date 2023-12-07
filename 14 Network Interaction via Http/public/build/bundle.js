@@ -82,6 +82,23 @@ var app = (function () {
     function set_current_component(component) {
         current_component = component;
     }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    /**
+     * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
+     * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
+     * it can be called from an external module).
+     *
+     * `onMount` does not run inside a [server-side component](/docs#run-time-server-side-component-api).
+     *
+     * https://svelte.dev/docs#run-time-svelte-onmount
+     */
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
 
     const dirty_components = [];
     const binding_callbacks = [];
@@ -508,11 +525,11 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[6] = list[i];
+    	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
-    // (53:0) {:else}
+    // (56:0) {:else}
     function create_else_block(ctx) {
     	let ul;
     	let each_blocks = [];
@@ -536,7 +553,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(ul, file, 53, 2, 1280);
+    			add_location(ul, file, 56, 2, 1358);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -568,14 +585,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(53:0) {:else}",
+    		source: "(56:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:0) {#if isLoading}
+    // (54:0) {#if isLoading}
     function create_if_block(ctx) {
     	let p;
 
@@ -583,7 +600,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file, 51, 2, 1252);
+    			add_location(p, file, 54, 2, 1330);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -598,17 +615,17 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(51:0) {#if isLoading}",
+    		source: "(54:0) {#if isLoading}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:4) {#each hobbies as hobby (Math.random())}
+    // (58:4) {#each hobbies as hobby (Math.random())}
     function create_each_block(key_1, ctx) {
     	let li;
-    	let t_value = /*hobby*/ ctx[6] + "";
+    	let t_value = /*hobby*/ ctx[5] + "";
     	let t;
 
     	const block = {
@@ -617,7 +634,7 @@ var app = (function () {
     		c: function create() {
     			li = element("li");
     			t = text(t_value);
-    			add_location(li, file, 55, 6, 1336);
+    			add_location(li, file, 58, 6, 1414);
     			this.first = li;
     		},
     		m: function mount(target, anchor) {
@@ -626,7 +643,7 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*hobbies*/ 1 && t_value !== (t_value = /*hobby*/ ctx[6] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*hobbies*/ 1 && t_value !== (t_value = /*hobby*/ ctx[5] + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
@@ -637,7 +654,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(55:4) {#each hobbies as hobby (Math.random())}",
+    		source: "(58:4) {#each hobbies as hobby (Math.random())}",
     		ctx
     	});
 
@@ -675,11 +692,11 @@ var app = (function () {
     			if_block.c();
     			if_block_anchor = empty();
     			attr_dev(label, "for", "hobby");
-    			add_location(label, file, 46, 0, 1101);
+    			add_location(label, file, 49, 0, 1179);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "hobby");
-    			add_location(input, file, 47, 0, 1129);
-    			add_location(button, file, 48, 0, 1186);
+    			add_location(input, file, 50, 0, 1207);
+    			add_location(button, file, 51, 0, 1264);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -755,13 +772,15 @@ var app = (function () {
     	let hobbyInput = `dummyData`;
     	let isLoading = false;
 
-    	async function loadData() {
-    		let data = await fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', { method: 'GET' });
-    		let respData = await data.json();
-    		$$invalidate(0, hobbies = Object.values(respData));
-    	}
+    	onMount(() => {
+    		async function loadData() {
+    			let data = await fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json', { method: 'GET' });
+    			let respData = await data.json();
+    			$$invalidate(0, hobbies = Object.values(respData));
+    		}
 
-    	loadData();
+    		loadData();
+    	});
 
     	async function addHobby() {
     		$$invalidate(0, hobbies = [...hobbies, hobbyInput]);
@@ -796,10 +815,10 @@ var app = (function () {
     	}
 
     	$$self.$capture_state = () => ({
+    		onMount,
     		hobbies,
     		hobbyInput,
     		isLoading,
-    		loadData,
     		addHobby
     	});
 
