@@ -25,7 +25,7 @@
 
 <section id="meetups">
   {#each filteredMeetups as meetup (meetup.id)}
-    <div transition:scale animate:flip>
+    <div transition:scale animate:flip={{ duration: 300 }}>
       <MeetupItem
         id={meetup.id}
         title={meetup.title}
