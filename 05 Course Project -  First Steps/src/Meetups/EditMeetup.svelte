@@ -111,7 +111,23 @@
   }
 
   function deleteMeetup() {
-    meetups.removeMeetup(id);
+    fetch(
+      `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
+      {
+        method: 'DELETE',
+      },
+    )
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed!');
+        }
+
+        meetups.removeMeetup(id);
+      })
+
+      .catch((err) => {
+        console.log('err', err);
+      });
     dispatch('save');
   }
 </script>
