@@ -8,12 +8,12 @@
 
   export let id = null;
 
-  let title = '';
-  let subtitle = '';
-  let address = '';
-  let email = '';
-  let description = '';
-  let imageUrl = '';
+  let title = 'a';
+  let subtitle = 'b';
+  let address = 'c';
+  let email = 'd@e.fg';
+  let description = 'h';
+  let imageUrl = 'i';
 
   if (id) {
     const unsubscribe = meetups.subscribe((items) => {
@@ -59,7 +59,31 @@
     if (id) {
       meetups.updateMeetup(id, meetupData);
     } else {
-      meetups.addMeetup(meetupData);
+      fetch(
+        'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
+        {
+          method: 'POST',
+          body: JSON.stringify({ ...meetupData, isFavorite: false }),
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Failed!');
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          meetups.addMeetup({
+            ...meetupData,
+            isFavorite: false,
+            id: data.name,
+          });
+        })
+        .catch((err) => {
+          console.log('err', err);
+        });
     }
 
     dispatch('save');
