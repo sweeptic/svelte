@@ -11,6 +11,32 @@
   let page = 'overview';
   let pageData = {};
 
+  fetch(
+    'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
+    {
+      method: 'GET',
+    },
+  )
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error('fetching meetups failed !');
+      }
+
+      return res.json();
+    })
+    .then((data) => {
+      const loadedMeetups = [];
+      for (const key in data) {
+        const element = data[key];
+        loadedMeetups.push({ ...element, id: key });
+      }
+
+      meetups.setMeetups(loadedMeetups);
+    })
+    .catch((err) => {
+      console.log('err', err);
+    });
+
   function savedMeetup() {
     editMode = null;
     editedId = null;
