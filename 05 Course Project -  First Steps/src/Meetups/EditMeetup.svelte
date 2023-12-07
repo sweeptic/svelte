@@ -57,7 +57,24 @@
     };
 
     if (id) {
-      meetups.updateMeetup(id, meetupData);
+      fetch(
+        `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(meetupData),
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Failed!');
+          }
+          meetups.updateMeetup(id, meetupData);
+        })
+
+        .catch((err) => {
+          console.log('err', err);
+        });
     } else {
       fetch(
         'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',

@@ -2635,7 +2635,7 @@ var app = (function () {
     const { Error: Error_1$1, console: console_1$1 } = globals;
     const file$7 = "src/Meetups/EditMeetup.svelte";
 
-    // (102:0) <Modal title="Edit Meetup Data" on:cancel>
+    // (119:0) <Modal title="Edit Meetup Data" on:cancel>
     function create_default_slot_3$1(ctx) {
     	let form;
     	let textinput0;
@@ -2754,7 +2754,7 @@ var app = (function () {
     			t4 = space();
     			create_component(textinput5.$$.fragment);
     			attr_dev(form, "class", "svelte-no1xoc");
-    			add_location(form, file$7, 102, 2, 2598);
+    			add_location(form, file$7, 119, 2, 3074);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -2844,14 +2844,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_3$1.name,
     		type: "slot",
-    		source: "(102:0) <Modal title=\\\"Edit Meetup Data\\\" on:cancel>",
+    		source: "(119:0) <Modal title=\\\"Edit Meetup Data\\\" on:cancel>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (155:4) <Button type="button" mode="outline" on:click={cancel}>
+    // (172:4) <Button type="button" mode="outline" on:click={cancel}>
     function create_default_slot_2$1(ctx) {
     	let t;
 
@@ -2871,14 +2871,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_2$1.name,
     		type: "slot",
-    		source: "(155:4) <Button type=\\\"button\\\" mode=\\\"outline\\\" on:click={cancel}>",
+    		source: "(172:4) <Button type=\\\"button\\\" mode=\\\"outline\\\" on:click={cancel}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (156:4) <Button type="button" on:click={submitForm} disabled={!formIsValid}       >
+    // (173:4) <Button type="button" on:click={submitForm} disabled={!formIsValid}       >
     function create_default_slot_1$1(ctx) {
     	let t;
 
@@ -2898,14 +2898,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$1.name,
     		type: "slot",
-    		source: "(156:4) <Button type=\\\"button\\\" on:click={submitForm} disabled={!formIsValid}       >",
+    		source: "(173:4) <Button type=\\\"button\\\" on:click={submitForm} disabled={!formIsValid}       >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (159:4) {#if id}
+    // (176:4) {#if id}
     function create_if_block$3(ctx) {
     	let button;
     	let current;
@@ -2956,14 +2956,14 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(159:4) {#if id}",
+    		source: "(176:4) {#if id}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (160:6) <Button type="button" on:click={deleteMeetup}>
+    // (177:6) <Button type="button" on:click={deleteMeetup}>
     function create_default_slot$2(ctx) {
     	let t;
 
@@ -2983,14 +2983,14 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(160:6) <Button type=\\\"button\\\" on:click={deleteMeetup}>",
+    		source: "(177:6) <Button type=\\\"button\\\" on:click={deleteMeetup}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (154:2) 
+    // (171:2) 
     function create_footer_slot(ctx) {
     	let div;
     	let button0;
@@ -3033,7 +3033,7 @@ var app = (function () {
     			t1 = space();
     			if (if_block) if_block.c();
     			attr_dev(div, "slot", "footer");
-    			add_location(div, file$7, 153, 2, 4018);
+    			add_location(div, file$7, 170, 2, 4494);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -3109,7 +3109,7 @@ var app = (function () {
     		block,
     		id: create_footer_slot.name,
     		type: "slot",
-    		source: "(154:2) ",
+    		source: "(171:2) ",
     		ctx
     	});
 
@@ -3225,7 +3225,19 @@ var app = (function () {
     		};
 
     		if (id) {
-    			customMeetupStore.updateMeetup(id, meetupData);
+    			fetch(`https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`, {
+    				method: 'PATCH',
+    				body: JSON.stringify(meetupData),
+    				headers: { 'Content-Type': 'application/json' }
+    			}).then(res => {
+    				if (!res.ok) {
+    					throw new Error('Failed!');
+    				}
+
+    				customMeetupStore.updateMeetup(id, meetupData);
+    			}).catch(err => {
+    				console.log('err', err);
+    			});
     		} else {
     			fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json', {
     				method: 'POST',
