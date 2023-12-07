@@ -5,11 +5,13 @@
   import Header from './UI/Header.svelte';
   import MeetupGrid from './Meetups/MeetupGrid.svelte';
   import meetups from './Meetups/meetups-store';
+  import LoadingSpinner from './UI/LoadingSpinner.svelte';
 
   let editMode;
   let editedId;
   let page = 'overview';
   let pageData = {};
+  let isLoading = true;
 
   fetch(
     'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
@@ -31,10 +33,14 @@
         loadedMeetups.push({ ...element, id: key });
       }
 
-      meetups.setMeetups(loadedMeetups);
+      setTimeout(() => {
+        meetups.setMeetups(loadedMeetups);
+        isLoading = false;
+      }, 1000);
     })
     .catch((err) => {
       console.log('err', err);
+      isLoading = false;
     });
 
   function savedMeetup() {
@@ -70,12 +76,16 @@
     {#if editMode === 'edit'}
       <EditMeetup id={editedId} on:save={savedMeetup} on:cancel={cancelEdit} />
     {/if}
-    <MeetupGrid
-      meetups={$meetups}
-      on:showdetails={showDetails}
-      on:edit={startEdit}
-      on:add={() => (editMode = 'edit')}
-    />
+    {#if isLoading}
+      <LoadingSpinner />
+    {:else}
+      <MeetupGrid
+        meetups={$meetups}
+        on:showdetails={showDetails}
+        on:edit={startEdit}
+        on:add={() => (editMode = 'edit')}
+      />
+    {/if}
   {:else}
     <MeetupDetail id={pageData.id} on:close={closeDetails} />
   {/if}
