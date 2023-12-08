@@ -22,7 +22,7 @@
           loadedMeetups.push({ ...element, id: key });
         }
 
-        return { fetchedMeetups_SERVER: loadedMeetups };
+        return { fetchedMeetups_SERVER: loadedMeetups.reverse() };
 
         // setTimeout(() => {
         //   meetups.setMeetups(loadedMeetups.reverse());
@@ -130,8 +130,7 @@
           email={meetup.contactEmail}
           address={meetup.address}
           isFav={meetup.isFavorite}
-          on:showdetails
-          on:edit
+          on:edit={startEdit}
         />
       </div>
     {/each}
