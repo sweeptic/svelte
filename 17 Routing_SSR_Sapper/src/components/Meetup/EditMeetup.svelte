@@ -3,8 +3,8 @@
   import TextInput from '../UI/TextInput.svelte';
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { isEmpty, isValidEmail } from '../helpers/validation.js';
-  import meetups from './meetups-store';
+  import { isEmpty, isValidEmail } from '../../helpers/validation.js';
+  import meetups from '../../meetups-store';
 
   export let id = null;
 

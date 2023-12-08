@@ -1,5 +1,5 @@
 <script>
-  import meetups from './meetups-store';
+  import meetups from '../../meetups-store';
   import Badge from './../UI/Badge.svelte';
 
   import Button from '../UI/Button.svelte';
@@ -10,7 +10,7 @@
   export let imageUrl;
   export let description;
   export let address;
-  //   export const email;
+  export let email;
   export let id;
   export let isFav;
 
@@ -58,6 +58,7 @@
   </div>
   <div class="content">
     <p>{description}</p>
+    <p>{email}</p>
   </div>
   <footer>
     <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}
