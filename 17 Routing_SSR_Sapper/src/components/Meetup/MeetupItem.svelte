@@ -1,87 +1,43 @@
 <script>
-  import meetups from '../../meetups-store';
-  import Badge from './../UI/Badge.svelte';
+  import { createEventDispatcher } from "svelte";
+  import meetups from "../../meetups-store.js";
+  import Button from "../UI/Button.svelte";
+  import Badge from "../UI/Badge.svelte";
+  import LoadingSpinner from "../UI/LoadingSpinner.svelte";
 
-  import Button from '../UI/Button.svelte';
-  import { createEventDispatcher } from 'svelte';
-
+  export let id;
   export let title;
   export let subtitle;
   export let imageUrl;
   export let description;
   export let address;
   export let email;
-  export let id;
   export let isFav;
 
   let isLoading = false;
 
+  const dispatch = createEventDispatcher();
+
   function toggleFavorite() {
     isLoading = true;
-    fetch(
-      `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ isFavorite: !isFav }),
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
-      .then((res) => {
+    fetch(`https://svelte-course.firebaseio.com/meetups/${id}.json`, {
+      method: "PATCH",
+      body: JSON.stringify({ isFavorite: !isFav }),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(res => {
         if (!res.ok) {
-          throw new Error('Failed!');
+          throw new Error("An error occurred, please try again!");
         }
         isLoading = false;
         meetups.toggleFavorite(id);
       })
-
-      .catch((err) => {
-        console.log('err', err);
+      .catch(err => {
+        isLoading = false;
+        console.log(err);
       });
   }
-
-  const dispatch = createEventDispatcher();
 </script>
-
-<article>
-  <header>
-    <h1>
-      {title}
-      {#if isFav}
-        <Badge>FAVORITE</Badge>
-      {/if}
-    </h1>
-    <h2>{subtitle}</h2>
-    <p>{address}</p>
-  </header>
-  <div class="image">
-    <img src={imageUrl} alt={title} />
-  </div>
-  <div class="content">
-    <p>{description}</p>
-    <p>{email}</p>
-  </div>
-  <footer>
-    <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}
-      >Edit</Button
-    >
-
-    {#if isLoading}
-      <span>Changing...</span>
-    {:else}
-      <Button
-        mode="outline"
-        color={isFav ? null : 'success'}
-        type="button"
-        on:click={toggleFavorite}
-        on:mouseLeave>{isFav ? 'Unfavorite' : 'Favorite'}</Button
-      >
-    {/if}
-
-    <Button type="button" on:click={dispatch('showdetails', id)}
-      >Show Details</Button
-    >
-  </footer>
-</article>
 
 <style>
   article {
@@ -111,15 +67,15 @@
   h1 {
     font-size: 1.25rem;
     margin: 0.5rem 0;
-    font-family: 'Roboto Slab', sans-serif;
+    font-family: "Roboto Slab", sans-serif;
   }
 
-  /* h1.is-favorite {
+  h1.is-favorite {
     background: #01a129;
     color: white;
     padding: 0 0.5rem;
     border-radius: 5px;
-  } */
+  }
 
   h2 {
     font-size: 1rem;
@@ -140,3 +96,42 @@
     height: 4rem;
   }
 </style>
+
+<article>
+  <header>
+    <h1>
+      {title}
+      {#if isFav}
+        <Badge>FAVORITE</Badge>
+      {/if}
+    </h1>
+    <h2>{subtitle}</h2>
+    <p>{address}</p>
+  </header>
+  <div class="image">
+    <img src={imageUrl} alt={title} />
+  </div>
+  <div class="content">
+    <p>{description}</p>
+  </div>
+  <footer>
+    <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}>
+      Edit
+    </Button>
+    {#if isLoading}
+      <!-- <LoadingSpinner /> -->
+      <span>Changing...</span>
+    {:else}
+      <Button
+        mode="outline"
+        color={isFav ? null : 'success'}
+        type="button"
+        on:click={toggleFavorite}>
+        {isFav ? 'Unfavorite' : 'Favorite'}
+      </Button>
+    {/if}
+    <Button href="/{id}">
+      Show Details
+    </Button>
+  </footer>
+</article>
