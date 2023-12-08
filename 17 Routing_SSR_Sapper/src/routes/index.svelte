@@ -1,40 +1,8 @@
-<script>
-  import MeetupItem from './../components/Meetup/MeetupItem.svelte';
-  import MeetupFilter from './../components/Meetup/MeetupFilter.svelte';
-  import LoadingSpinner from './../components/UI/LoadingSpinner.svelte';
-  import EditMeetup from './../components/Meetup/EditMeetup.svelte';
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-  import { scale } from 'svelte/transition';
-  import { flip } from 'svelte/animate';
-  import Button from '../components/UI/Button.svelte';
-  import meetups from '../meetups-store';
+<script context="module">
+  // your script goes here
 
-  let fetchedMeetups = [];
-
-  let editMode;
-  let editedId;
-  let isLoading;
-
-  let favsOnly = false;
-  let unsubscribe;
-
-  const dispatch = createEventDispatcher();
-
-  function setFilter(event) {
-    favsOnly = event.detail === 1;
-  }
-
-  $: filteredMeetups = favsOnly
-    ? fetchedMeetups.filter((m) => m.isFavorite)
-    : fetchedMeetups;
-
-  onMount(() => {
-    console.log('fetch in client side');
-    unsubscribe = meetups.subscribe((items) => {
-      fetchedMeetups = items;
-    });
-    isLoading = true;
-    fetch(
+  export function preload(page) {
+    return this.fetch(
       'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
       {
         method: 'GET',
@@ -54,21 +22,52 @@
           loadedMeetups.push({ ...element, id: key });
         }
 
-        setTimeout(() => {
-          meetups.setMeetups(loadedMeetups.reverse());
-          isLoading = false;
-        }, 1000);
+        return { fetchedMeetups_SERVER: loadedMeetups };
+
+        // setTimeout(() => {
+        //   meetups.setMeetups(loadedMeetups.reverse());
+        //   isLoading = false;
+        // }, 1000);
       })
       .catch((err) => {
         console.log('err', err);
         error = err;
         isLoading = false;
+        this.error(500, 'Could not fetch meetups!');
       });
-  });
+  }
+</script>
 
-  onDestroy(() => {
-    if (unsubscribe) unsubscribe();
-  });
+<script>
+  import MeetupItem from './../components/Meetup/MeetupItem.svelte';
+  import MeetupFilter from './../components/Meetup/MeetupFilter.svelte';
+  import LoadingSpinner from './../components/UI/LoadingSpinner.svelte';
+  import EditMeetup from './../components/Meetup/EditMeetup.svelte';
+  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { scale } from 'svelte/transition';
+  import { flip } from 'svelte/animate';
+  import Button from '../components/UI/Button.svelte';
+  import meetups from '../meetups-store';
+
+  export let fetchedMeetups_SERVER;
+
+  let editMode;
+  let editedId;
+  let isLoading;
+
+  let favsOnly = false;
+
+  const dispatch = createEventDispatcher();
+
+  function setFilter(event) {
+    favsOnly = event.detail === 1;
+  }
+
+  $: filteredMeetups = favsOnly
+    ? fetchedMeetups_SERVER.filter((m) => m.isFavorite)
+    : fetchedMeetups_SERVER;
+
+  onMount(() => meetups.setMeetups(fetchedMeetups_SERVER));
 
   function savedMeetup() {
     editMode = null;
