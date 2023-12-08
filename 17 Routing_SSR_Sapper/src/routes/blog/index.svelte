@@ -1,5 +1,7 @@
 <script context="module">
   export function preload({ params, query }) {
+    console.log('Preloading...');
+
     return this.fetch(`blog.json`)
       .then((r) => r.json())
       .then((posts) => {
