@@ -4030,7 +4030,7 @@ var app = (function () {
     		});
 
     	button.$on("click", /*toggleFavorite*/ ctx[8]);
-    	button.$on("mouseLeave", /*mouseLeave_handler*/ ctx[12]);
+    	button.$on("mouseLeave", /*mouseLeave_handler*/ ctx[11]);
 
     	const block = {
     		c: function create() {
@@ -4044,7 +4044,7 @@ var app = (function () {
     			const button_changes = {};
     			if (dirty & /*isFav*/ 64) button_changes.color = /*isFav*/ ctx[6] ? null : 'success';
 
-    			if (dirty & /*$$scope, isFav*/ 8256) {
+    			if (dirty & /*$$scope, isFav*/ 4160) {
     				button_changes.$$scope = { dirty, ctx };
     			}
 
@@ -4083,7 +4083,7 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			span.textContent = "Changing...";
-    			add_location(span, file$3, 67, 6, 1459);
+    			add_location(span, file$3, 67, 6, 1466);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -4206,7 +4206,7 @@ var app = (function () {
     			$$inline: true
     		});
 
-    	button0.$on("click", /*click_handler*/ ctx[11]);
+    	button0.$on("click", /*click_handler*/ ctx[10]);
     	const if_block_creators = [create_if_block$2, create_else_block$1];
     	const if_blocks = [];
 
@@ -4259,28 +4259,28 @@ var app = (function () {
     			if_block1.c();
     			t11 = space();
     			create_component(button1.$$.fragment);
-    			attr_dev(h1, "class", "svelte-lym3nh");
-    			add_location(h1, file$3, 46, 4, 1040);
-    			attr_dev(h2, "class", "svelte-lym3nh");
-    			add_location(h2, file$3, 52, 4, 1135);
-    			attr_dev(p0, "class", "svelte-lym3nh");
-    			add_location(p0, file$3, 53, 4, 1159);
-    			attr_dev(header, "class", "svelte-lym3nh");
-    			add_location(header, file$3, 45, 2, 1027);
+    			attr_dev(h1, "class", "svelte-zhhu2h");
+    			add_location(h1, file$3, 46, 4, 1047);
+    			attr_dev(h2, "class", "svelte-zhhu2h");
+    			add_location(h2, file$3, 52, 4, 1142);
+    			attr_dev(p0, "class", "svelte-zhhu2h");
+    			add_location(p0, file$3, 53, 4, 1166);
+    			attr_dev(header, "class", "svelte-zhhu2h");
+    			add_location(header, file$3, 45, 2, 1034);
     			if (!src_url_equal(img.src, img_src_value = /*imageUrl*/ ctx[2])) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", /*title*/ ctx[0]);
-    			attr_dev(img, "class", "svelte-lym3nh");
-    			add_location(img, file$3, 56, 4, 1214);
-    			attr_dev(div0, "class", "image svelte-lym3nh");
-    			add_location(div0, file$3, 55, 2, 1190);
-    			attr_dev(p1, "class", "svelte-lym3nh");
-    			add_location(p1, file$3, 59, 4, 1286);
-    			attr_dev(div1, "class", "content svelte-lym3nh");
-    			add_location(div1, file$3, 58, 2, 1260);
-    			attr_dev(footer, "class", "svelte-lym3nh");
-    			add_location(footer, file$3, 61, 2, 1318);
-    			attr_dev(article, "class", "svelte-lym3nh");
-    			add_location(article, file$3, 44, 0, 1015);
+    			attr_dev(img, "class", "svelte-zhhu2h");
+    			add_location(img, file$3, 56, 4, 1221);
+    			attr_dev(div0, "class", "image svelte-zhhu2h");
+    			add_location(div0, file$3, 55, 2, 1197);
+    			attr_dev(p1, "class", "svelte-zhhu2h");
+    			add_location(p1, file$3, 59, 4, 1293);
+    			attr_dev(div1, "class", "content svelte-zhhu2h");
+    			add_location(div1, file$3, 58, 2, 1267);
+    			attr_dev(footer, "class", "svelte-zhhu2h");
+    			add_location(footer, file$3, 61, 2, 1325);
+    			attr_dev(article, "class", "svelte-zhhu2h");
+    			add_location(article, file$3, 44, 0, 1022);
     		},
     		l: function claim(nodes) {
     			throw new Error_1$1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4353,7 +4353,7 @@ var app = (function () {
     			if (!current || dirty & /*description*/ 8) set_data_dev(t8, /*description*/ ctx[3]);
     			const button0_changes = {};
 
-    			if (dirty & /*$$scope*/ 8192) {
+    			if (dirty & /*$$scope*/ 4096) {
     				button0_changes.$$scope = { dirty, ctx };
     			}
 
@@ -4386,7 +4386,7 @@ var app = (function () {
 
     			const button1_changes = {};
 
-    			if (dirty & /*$$scope*/ 8192) {
+    			if (dirty & /*$$scope*/ 4096) {
     				button1_changes.$$scope = { dirty, ctx };
     			}
 
@@ -4435,7 +4435,6 @@ var app = (function () {
     	let { imageUrl } = $$props;
     	let { description } = $$props;
     	let { address } = $$props;
-    	let { email } = $$props;
     	let { id } = $$props;
     	let { isFav } = $$props;
     	let isLoading = false;
@@ -4482,10 +4481,6 @@ var app = (function () {
     			console_1$1.warn("<MeetupItem> was created without expected prop 'address'");
     		}
 
-    		if (email === undefined && !('email' in $$props || $$self.$$.bound[$$self.$$.props['email']])) {
-    			console_1$1.warn("<MeetupItem> was created without expected prop 'email'");
-    		}
-
     		if (id === undefined && !('id' in $$props || $$self.$$.bound[$$self.$$.props['id']])) {
     			console_1$1.warn("<MeetupItem> was created without expected prop 'id'");
     		}
@@ -4495,16 +4490,7 @@ var app = (function () {
     		}
     	});
 
-    	const writable_props = [
-    		'title',
-    		'subtitle',
-    		'imageUrl',
-    		'description',
-    		'address',
-    		'email',
-    		'id',
-    		'isFav'
-    	];
+    	const writable_props = ['title', 'subtitle', 'imageUrl', 'description', 'address', 'id', 'isFav'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1$1.warn(`<MeetupItem> was created with unknown prop '${key}'`);
@@ -4522,7 +4508,6 @@ var app = (function () {
     		if ('imageUrl' in $$props) $$invalidate(2, imageUrl = $$props.imageUrl);
     		if ('description' in $$props) $$invalidate(3, description = $$props.description);
     		if ('address' in $$props) $$invalidate(4, address = $$props.address);
-    		if ('email' in $$props) $$invalidate(10, email = $$props.email);
     		if ('id' in $$props) $$invalidate(5, id = $$props.id);
     		if ('isFav' in $$props) $$invalidate(6, isFav = $$props.isFav);
     	};
@@ -4537,7 +4522,6 @@ var app = (function () {
     		imageUrl,
     		description,
     		address,
-    		email,
     		id,
     		isFav,
     		isLoading,
@@ -4551,7 +4535,6 @@ var app = (function () {
     		if ('imageUrl' in $$props) $$invalidate(2, imageUrl = $$props.imageUrl);
     		if ('description' in $$props) $$invalidate(3, description = $$props.description);
     		if ('address' in $$props) $$invalidate(4, address = $$props.address);
-    		if ('email' in $$props) $$invalidate(10, email = $$props.email);
     		if ('id' in $$props) $$invalidate(5, id = $$props.id);
     		if ('isFav' in $$props) $$invalidate(6, isFav = $$props.isFav);
     		if ('isLoading' in $$props) $$invalidate(7, isLoading = $$props.isLoading);
@@ -4572,7 +4555,6 @@ var app = (function () {
     		isLoading,
     		toggleFavorite,
     		dispatch,
-    		email,
     		click_handler,
     		mouseLeave_handler
     	];
@@ -4588,7 +4570,6 @@ var app = (function () {
     			imageUrl: 2,
     			description: 3,
     			address: 4,
-    			email: 10,
     			id: 5,
     			isFav: 6
     		});
@@ -4638,14 +4619,6 @@ var app = (function () {
     	}
 
     	set address(value) {
-    		throw new Error_1$1("<MeetupItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get email() {
-    		throw new Error_1$1("<MeetupItem>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set email(value) {
     		throw new Error_1$1("<MeetupItem>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 

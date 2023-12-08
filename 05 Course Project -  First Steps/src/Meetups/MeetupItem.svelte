@@ -10,7 +10,7 @@
   export let imageUrl;
   export let description;
   export let address;
-  export let email;
+  //   export const email;
   export let id;
   export let isFav;
 
@@ -113,12 +113,12 @@
     font-family: 'Roboto Slab', sans-serif;
   }
 
-  h1.is-favorite {
+  /* h1.is-favorite {
     background: #01a129;
     color: white;
     padding: 0 0.5rem;
     border-radius: 5px;
-  }
+  } */
 
   h2 {
     font-size: 1rem;
