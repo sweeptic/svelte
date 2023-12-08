@@ -51,9 +51,11 @@
 
   export let fetchedMeetups_SERVER;
 
+  let loadedMeetups = [];
   let editMode;
   let editedId;
   let isLoading;
+  let unsubscribe;
 
   let favsOnly = false;
 
@@ -64,10 +66,19 @@
   }
 
   $: filteredMeetups = favsOnly
-    ? fetchedMeetups_SERVER.filter((m) => m.isFavorite)
-    : fetchedMeetups_SERVER;
+    ? loadedMeetups.filter((m) => m.isFavorite)
+    : loadedMeetups;
 
-  onMount(() => meetups.setMeetups(fetchedMeetups_SERVER));
+  onMount(() => {
+    unsubscribe = meetups.subscribe((items) => {
+      loadedMeetups = items;
+    });
+    meetups.setMeetups(fetchedMeetups_SERVER);
+  });
+
+  onDestroy(() => {
+    if (unsubscribe) unsubscribe();
+  });
 
   function savedMeetup() {
     editMode = null;
@@ -83,6 +94,10 @@
     editMode = 'edit';
     editedId = event.detail;
   }
+
+  function startAdd() {
+    editMode = 'edit';
+  }
 </script>
 
 <svelte:head>
@@ -97,7 +112,7 @@
 {:else}
   <section id="meetup-controls">
     <MeetupFilter on:select={setFilter} />
-    <Button on:click={() => dispatch('add')}>New Meetup</Button>
+    <Button on:click={startAdd}>New Meetup</Button>
   </section>
   {#if filteredMeetups.length === 0}
     <!-- content here -->
