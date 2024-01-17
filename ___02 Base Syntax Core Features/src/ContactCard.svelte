@@ -7,14 +7,17 @@
 
 <div class="contact-card">
   <header class:thumb-placeholder={!imageUrl}>
-    <div class={'thumb'}>
+    <p class={"headerStyle"} class:paddingStyle={true}>abcdfdfdd</p>
+    <div class="thumb">
       <img src={imageUrl} alt={'link'} />
     </div>
+
     <div class="user-data">
       <h1>{name}</h1>
       <h2>Job {title}</h2>
     </div>
   </header>
+
   <div class="description">
     <p>A short {@html description}</p>
   </div>
@@ -38,6 +41,16 @@
   .thumb {
     width: 33%;
     height: 100%;
+  }
+
+  .headerStyle {
+    background-color: red;
+
+  }
+
+    .paddingStyle {
+
+    padding: 1rem;
   }
 
   .thumb-placeholder {

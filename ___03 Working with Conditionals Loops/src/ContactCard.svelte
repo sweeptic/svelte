@@ -1,11 +1,15 @@
 <script>
   export let name;
+  export let contact;
   export let jobTitle;
   export let description;
   export let userImage;
   export let removePassword;
   export let i;
   //   const initialName = name;
+  console.log('contact', contact);
+
+  
 </script>
 
 <div class="contact-card">

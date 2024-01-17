@@ -10,7 +10,9 @@
 
   $: uppercaseName = name.toUpperCase(); // label statement
 
-  $: console.log(name);
+  $: console.log('name: ',name);
+  console.log('RUN ONCE');
+  
 
   $: if (name === 'Maximilian') {
     console.log('runs');

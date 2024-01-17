@@ -104,6 +104,7 @@
   <ContactCard
     {i}
     {removePassword}
+    {contact}
     name={contact.name + Math.round(contact.id * 100)}
     jobTitle={contact.jobTitle}
     description={contact.description}
