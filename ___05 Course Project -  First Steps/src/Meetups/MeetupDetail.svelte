@@ -7,10 +7,15 @@
   let selectedMeetup;
 
   const unsubscribe = meetups.subscribe((items) => {
+    console.log('Subscribe run', items);
+    
     selectedMeetup = items.find((i) => i.id === id);
   });
 
   const dispatch = createEventDispatcher();
+
+//   console.log('meetups', $meetups);
+  
 
   onDestroy(() => {
     unsubscribe();

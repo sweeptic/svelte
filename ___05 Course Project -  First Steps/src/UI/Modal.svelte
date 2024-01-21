@@ -12,6 +12,8 @@
   }
 </script>
 
+<!-- console.log('ok'); -->
+
 <div
   transition:fade
   class="modal-backdrop"

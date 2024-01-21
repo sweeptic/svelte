@@ -4,7 +4,9 @@
 
 <span transition:slide>
   <slot />
+
 </span>
+
 
 <style>
   span {
@@ -19,3 +21,5 @@
     font-size: 0.8rem;
   }
 </style>
+
+<!-- ok -->

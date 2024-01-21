@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
 
 
-const meetups = writable(
-    []);
+const meetups = writable([]);
+
 
 const customMeetupStore = {
     subscribe: meetups.subscribe,

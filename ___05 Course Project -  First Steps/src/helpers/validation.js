@@ -6,3 +6,4 @@ export function isEmpty(val) {
 export function isValidEmail(val) {
     return val.includes('@');
 }
+

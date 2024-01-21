@@ -21,6 +21,7 @@
       method: 'GET',
     },
   )
+
     .then((res) => {
       if (!res.ok) {
         throw new Error('fetching meetups failed !');
@@ -34,6 +35,7 @@
         const element = data[key];
         loadedMeetups.push({ ...element, id: key });
       }
+
 
       setTimeout(() => {
         meetups.setMeetups(loadedMeetups.reverse());
@@ -74,7 +76,13 @@
   function clearError() {
     error = undefined;
   }
+
+//   console.log('meetups', meetups);
+//    console.log('$meetups', $meetups);
+  
 </script>
+
+
 
 {#if error}
   <Error message={error.message} on:cancel={clearError} />
@@ -84,9 +92,11 @@
 
 <main>
   {#if page === 'overview'}
+
     {#if editMode === 'edit'}
       <EditMeetup id={editedId} on:save={savedMeetup} on:cancel={cancelEdit} />
     {/if}
+
     {#if isLoading}
       <LoadingSpinner />
     {:else}
@@ -97,9 +107,13 @@
         on:add={() => (editMode = 'edit')}
       />
     {/if}
+
+
   {:else}
     <MeetupDetail id={pageData.id} on:close={closeDetails} />
   {/if}
+
+
 </main>
 
 <style>
