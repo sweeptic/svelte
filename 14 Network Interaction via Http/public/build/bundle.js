@@ -512,7 +512,7 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[7] = list[i];
+    	child_ctx[6] = list[i];
     	return child_ctx;
     }
 
@@ -535,7 +535,7 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(ul, file, 63, 2, 1447);
+    			add_location(ul, file, 63, 2, 1430);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, ul, anchor);
@@ -596,7 +596,7 @@ var app = (function () {
     		c: function create() {
     			p = element("p");
     			p.textContent = "Loading...";
-    			add_location(p, file, 61, 2, 1419);
+    			add_location(p, file, 61, 2, 1402);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, p, anchor);
@@ -621,21 +621,21 @@ var app = (function () {
     // (65:4) {#each $hobbyStore as hobby}
     function create_each_block(ctx) {
     	let li;
-    	let t_value = /*hobby*/ ctx[7] + "";
+    	let t_value = /*hobby*/ ctx[6] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			li = element("li");
     			t = text(t_value);
-    			add_location(li, file, 65, 6, 1491);
+    			add_location(li, file, 65, 6, 1474);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
     			append_dev(li, t);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$hobbyStore*/ 4 && t_value !== (t_value = /*hobby*/ ctx[7] + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$hobbyStore*/ 4 && t_value !== (t_value = /*hobby*/ ctx[6] + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(li);
@@ -685,11 +685,11 @@ var app = (function () {
     			if_block.c();
     			if_block_anchor = empty();
     			attr_dev(label, "for", "hobby");
-    			add_location(label, file, 56, 0, 1264);
+    			add_location(label, file, 56, 0, 1247);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "hobby");
-    			add_location(input, file, 57, 0, 1297);
-    			add_location(button, file, 58, 0, 1353);
+    			add_location(input, file, 57, 0, 1280);
+    			add_location(button, file, 58, 0, 1336);
     		},
     		l: function claim(nodes) {
     			throw new Error_1("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -762,7 +762,7 @@ var app = (function () {
     	let isLoading = false;
     	isLoading = true;
 
-    	let getHobbies = fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json').then(res => {
+    	fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json').then(res => {
     		if (!res.ok) {
     			throw new Error('Failed!');
     		}
@@ -818,7 +818,6 @@ var app = (function () {
     		hobbies,
     		hobbyInput,
     		isLoading,
-    		getHobbies,
     		addHobby,
     		$hobbyStore
     	});
@@ -827,7 +826,6 @@ var app = (function () {
     		if ('hobbies' in $$props) hobbies = $$props.hobbies;
     		if ('hobbyInput' in $$props) $$invalidate(0, hobbyInput = $$props.hobbyInput);
     		if ('isLoading' in $$props) $$invalidate(1, isLoading = $$props.isLoading);
-    		if ('getHobbies' in $$props) getHobbies = $$props.getHobbies;
     	};
 
     	if ($$props && "$$inject" in $$props) {

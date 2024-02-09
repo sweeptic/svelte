@@ -8,12 +8,11 @@
   export let i;
   //   const initialName = name;
   console.log('contact', contact);
-
-  
 </script>
 
 <div class="contact-card">
-  <button on:click={removePassword.bind(this, i)}>Delete</button>
+  <!-- <button on:click={removePassword.bind(this, i)}>Delete</button> -->
+  <button on:click={() => removePassword(i)}>Delete</button>
   <header>
     <div class="thumb" class:thumb-placeholder={!userImage}>
       <img src={userImage} alt={name} />

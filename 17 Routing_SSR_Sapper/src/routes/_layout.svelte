@@ -2,6 +2,7 @@
 </script>
 
 <main>
+    slot here
   <slot />
 </main>
 

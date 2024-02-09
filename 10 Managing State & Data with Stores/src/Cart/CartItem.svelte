@@ -9,6 +9,7 @@
 
   let showDescription = false;
   let description = 'Not available!';
+  let arr = 'a'
   //   let fetchedProducts = [];
 
   //   products.subscribe(prods => {
@@ -17,12 +18,27 @@
 
   function displayDescription() {
     showDescription = !showDescription;
-    // description = fetchedProducts.find(p => p.id === id).description;
-    const unsubscribe = products.subscribe((prods) => {
-      description = prods.find((p) => p.id === id).description;
-    });
-    unsubscribe();
+    // // description = fetchedProducts.find(p => p.id === id).description;
+    // const unsubscribe = products.subscribe((prods) => {
+      arr = 'b'
+
+    //   description = prods.find((p) => p.id === id)?.description;
+    // });
+    // unsubscribe();
+
+    const e = $products.find((p) => p.id === id)?.description
+
+    console.log('e',e );
+    description = e
+    
+
+
+
   }
+
+    $: console.log('arr: ',arr);
+
+  //   $: arr = arr.push('e')
 
   function removeFromCart() {
     cartItems.removeItem(id);
@@ -30,6 +46,7 @@
 </script>
 
 <li>
+  <p>{arr}</p>
   <h1>{title}</h1>
   <h2>{price}</h2>
   <Button mode="outline" on:click={displayDescription}>

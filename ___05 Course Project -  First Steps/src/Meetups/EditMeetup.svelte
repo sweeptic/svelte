@@ -1,3 +1,4 @@
+<!-- ok -->
 <script>
   import Modal from '../UI/Modal.svelte';
   import TextInput from '../UI/TextInput.svelte';
@@ -37,13 +38,7 @@
   $: imageUrlValid = !isEmpty(imageUrl);
   $: emailValid = !isEmpty(email) && isValidEmail(email);
   $: descriptionValid = !isEmpty(description);
-  $: formIsValid =
-    titleValid &&
-    subtitleValid &&
-    addressValid &&
-    imageUrlValid &&
-    emailValid &&
-    descriptionValid;
+  $: formIsValid = titleValid && subtitleValid && addressValid && imageUrlValid && emailValid && descriptionValid;
 
   function submitForm() {
     const meetupData = {
@@ -63,7 +58,7 @@
           method: 'PATCH',
           body: JSON.stringify(meetupData),
           headers: { 'Content-Type': 'application/json' },
-        },
+        }
       )
         .then((res) => {
           if (!res.ok) {
@@ -76,14 +71,11 @@
           console.log('err', err);
         });
     } else {
-      fetch(
-        'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ...meetupData, isFavorite: false }),
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
+      fetch('https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups.json', {
+        method: 'POST',
+        body: JSON.stringify({ ...meetupData, isFavorite: false }),
+        headers: { 'Content-Type': 'application/json' },
+      })
         .then((res) => {
           if (!res.ok) {
             throw new Error('Failed!');
@@ -111,12 +103,9 @@
   }
 
   function deleteMeetup() {
-    fetch(
-      `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
-      {
-        method: 'DELETE',
-      },
-    )
+    fetch(`https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`, {
+      method: 'DELETE',
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed!');
@@ -186,9 +175,7 @@
   </form>
   <div slot="footer">
     <Button type="button" mode="outline" on:click={cancel}>Cancel</Button>
-    <Button type="button" on:click={submitForm} disabled={!formIsValid}
-      >Save</Button
-    >
+    <Button type="button" on:click={submitForm} disabled={!formIsValid}>Save</Button>
     {#if id}
       <Button type="button" on:click={deleteMeetup}>Delete</Button>
     {/if}

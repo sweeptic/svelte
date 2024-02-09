@@ -5,12 +5,12 @@
   import Button from '../UI/Button.svelte';
   import { createEventDispatcher } from 'svelte';
 
+  //   export const email;
   export let title;
   export let subtitle;
   export let imageUrl;
   export let description;
   export let address;
-  //   export const email;
   export let id;
   export let isFav;
 
@@ -18,14 +18,11 @@
 
   function toggleFavorite() {
     isLoading = true;
-    fetch(
-      `https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`,
-      {
-        method: 'PATCH',
-        body: JSON.stringify({ isFavorite: !isFav }),
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
+    fetch(`https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/meetups/${id}.json`, {
+      method: 'PATCH',
+      body: JSON.stringify({ isFavorite: !isFav }),
+      headers: { 'Content-Type': 'application/json' },
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error('Failed!');
@@ -39,8 +36,6 @@
       });
   }
 
-
-  
   const dispatch = createEventDispatcher();
 </script>
 
@@ -62,25 +57,19 @@
     <p>{description}</p>
   </div>
   <footer>
-    <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}
-      >Edit</Button
-    >
+    <!-- ok -->
+    <Button mode="outline" type="button" on:click={() => dispatch('edit', id)}>Edit</Button>
 
     {#if isLoading}
       <span>Changing...</span>
     {:else}
-      <Button
-        mode="outline"
-        color={isFav ? null : 'success'}
-        type="button"
-        on:click={toggleFavorite}
-        on:mouseLeave>{isFav ? 'Unfavorite' : 'Favorite'}</Button
+      <!-- ok -->
+      <Button mode="outline" color={isFav ? null : 'success'} type="button" on:click={toggleFavorite} on:mouseLeave
+        >{isFav ? 'Unfavorite' : 'Favorite'}</Button
       >
     {/if}
 
-    <Button type="button" on:click={dispatch('showdetails', id)}
-      >Show Details</Button
-    >
+    <Button type="button" on:click={dispatch('showdetails', { xxx: id })}>Show Details</Button>
   </footer>
 </article>
 

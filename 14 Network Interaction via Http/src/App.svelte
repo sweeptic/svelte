@@ -7,7 +7,7 @@
   let isLoading = false;
 
   isLoading = true;
-  let getHobbies = fetch(
+  fetch(
     'https://ng-course-recipe-book-d5b48-default-rtdb.europe-west1.firebasedatabase.app/hobbies.json',
   )
     .then((res) => {

@@ -7,6 +7,7 @@
   import { flip } from 'svelte/animate';
 
   export let meetups;
+
   let favsOnly = false;
 
   const dispatch = createEventDispatcher();
@@ -14,12 +15,15 @@
   function setFilter(event) {
     favsOnly = event.detail === 1;
   }
-
+  //   ok
   $: filteredMeetups = favsOnly ? meetups.filter((m) => m.isFavorite) : meetups;
+  //
 </script>
 
 <section id="meetup-controls">
-  <MeetupFilter on:select={setFilter} />
+  <!-- ok -->
+  <MeetupFilter on:select={setFilter} on:dispatch_action />
+  <!-- ok -->
   <Button on:click={() => dispatch('add')}>New Meetup</Button>
 </section>
 {#if filteredMeetups.length === 0}
@@ -30,6 +34,7 @@
   {#each filteredMeetups as meetup (meetup.id)}
     <!-- {#each meetups as meetup (meetup.id)} -->
     <div transition:scale animate:flip={{ duration: 300 }}>
+      <!-- ok -->
       <MeetupItem
         id={meetup.id}
         title={meetup.title}

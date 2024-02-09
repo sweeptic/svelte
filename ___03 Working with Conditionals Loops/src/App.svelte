@@ -36,14 +36,21 @@
         desc: description,
       },
     ];
-
-    // createdContacts.push(contact);
+    // ez beupdateli a statet, csak nem fog renderelni ...
+    // createdContacts.push({
+    //   id: Math.random(),
+    //   name: name,
+    //   jobTitle: title,
+    //   imageUrl: image,
+    //   desc: description,
+    // });
 
     formState = 'done';
   }
 
   function deleteFirst(params) {
-    // createdContacts.shift();
+    // createdContacts.shift(); // ez beupdateli a statet, csak nem fog renderelni ...
+    // uj peldany kell mint a reactban.
     createdContacts = createdContacts.slice(1);
   }
 
@@ -52,6 +59,8 @@
   }
 
   function removePassword(param) {
+    console.log('param', param);
+
     const newArr = [...createdContacts];
     newArr.splice(param, 1);
     createdContacts = newArr;
@@ -87,9 +96,7 @@
   >Add Contact Card</button
 > -->
 
-<button on:click|stopPropagation={(ev) => addContact(ev, 'param')}
-  >Add Contact Card arrow</button
->
+<button on:click|stopPropagation={(ev) => addContact(ev, 'param')}>Add Contact Card arrow</button>
 <button on:click={deleteFirst}>Delete First</button>
 <button on:click={deleteLast}>Delete Last</button>
 

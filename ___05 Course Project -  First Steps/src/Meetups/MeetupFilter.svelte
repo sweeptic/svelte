@@ -6,8 +6,6 @@
   let selectedButton = 0;
 </script>
 
-
-
 <div>
   <button
     type="button"
@@ -28,6 +26,15 @@
     }}
   >
     Favorites
+  </button>
+  <button
+    type="button"
+    class:active={selectedButton === 0}
+    on:click={() => {
+      dispatch('dispatch_action', 0);
+    }}
+  >
+    dispatch
   </button>
 </div>
 

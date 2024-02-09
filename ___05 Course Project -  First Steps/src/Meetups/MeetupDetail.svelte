@@ -6,16 +6,17 @@
 
   let selectedMeetup;
 
+  console.log('render meetupdetail');
+
   const unsubscribe = meetups.subscribe((items) => {
     console.log('Subscribe run', items);
-    
+
     selectedMeetup = items.find((i) => i.id === id);
   });
 
   const dispatch = createEventDispatcher();
 
-//   console.log('meetups', $meetups);
-  
+  //   console.log('meetups', $meetups);
 
   onDestroy(() => {
     unsubscribe();
@@ -32,9 +33,7 @@
     <p>{selectedMeetup.address}</p>
     <p>{selectedMeetup.description}</p>
     <Button href="mailto:{selectedMeetup.contactEmail}">Contact</Button>
-    <Button type="button" mode="outline" on:click={() => dispatch('close')}
-      >Close</Button
-    >
+    <Button type="button" mode="outline" on:click={() => dispatch('close')}>Close</Button>
   </div>
 </section>
 

@@ -10,9 +10,9 @@
 
   $: uppercaseName = name.toUpperCase(); // label statement
 
-  $: console.log('name: ',name);
+  $: console.log('name: ', name);
+
   console.log('RUN ONCE');
-  
 
   $: if (name === 'Maximilian') {
     console.log('runs');
@@ -21,6 +21,16 @@
 
   function incrementAge() {
     age++;
+  }
+
+  $: {
+    if (name.length) {
+      console.log('its runs', name);
+      console.log('its runs');
+      console.log('its runs');
+      console.log('its runs');
+      age = 222222;
+    }
   }
 
   function changeName() {

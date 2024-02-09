@@ -6,7 +6,9 @@ const meetups = writable([]);
 
 const customMeetupStore = {
     subscribe: meetups.subscribe,
-    setMeetups: (meetupArray) => { meetups.set(meetupArray); },
+    // ok
+    setMeetups: meetupArray => meetups.set(meetupArray),
+
     addMeetup: (meetupData) => {
         const newMeetup = {
             ...meetupData,

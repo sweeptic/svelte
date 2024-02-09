@@ -28,6 +28,7 @@
   }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div on:click={activate} class:active={isActive}>
   <h1>{member.name}</h1>
   {#if member.isParent}

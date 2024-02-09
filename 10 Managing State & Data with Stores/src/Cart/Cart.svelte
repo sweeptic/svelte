@@ -4,9 +4,19 @@
   import CartItem from './CartItem.svelte';
   import { timer } from '../timer-store.js';
 
-  const unsubscribe = timer.subscribe((count) => {
-    console.log('Cart: ', count);
-  });
+  //   const unsubscribe = timer.subscribe((count) => {
+  //     console.log('Cart: ', count);
+  //   });
+
+  //   onDestroy(() => {
+  //     if (unsubscribe) {
+  //       unsubscribe();
+  //     }
+  //   });
+
+  $: console.log('timer', $timer);
+  
+
 
   //   let items;
 
@@ -14,11 +24,6 @@
   //     items = its;
   //   });
 
-  onDestroy(() => {
-    if (unsubscribe) {
-      unsubscribe();
-    }
-  });
   //   export let items = [
   //     {
   //       id: "p1",
@@ -35,6 +40,7 @@
 
 <section>
   <h1>Cart</h1>
+  <p>Count: {$timer}</p>
   <ul>
     {#each $cartItems as item (item.id)}
       <CartItem id={item.id} title={item.title} price={item.price} />

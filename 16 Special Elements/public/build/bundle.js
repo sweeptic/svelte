@@ -736,7 +736,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (33:2) {#if member.isParent}
+    // (34:2) {#if member.isParent}
     function create_if_block(ctx) {
     	let each_1_anchor;
     	let current;
@@ -827,14 +827,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(33:2) {#if member.isParent}",
+    		source: "(34:2) {#if member.isParent}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:4) {#each member.children as child}
+    // (35:4) {#each member.children as child}
     function create_each_block$1(ctx) {
     	let familynode;
     	let current;
@@ -875,7 +875,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(34:4) {#each member.children as child}",
+    		source: "(35:4) {#each member.children as child}",
     		ctx
     	});
 
@@ -900,10 +900,10 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
     			if (if_block) if_block.c();
-    			add_location(h1, file$1, 31, 2, 556);
+    			add_location(h1, file$1, 32, 2, 613);
     			attr_dev(div, "class", "svelte-1111zfo");
     			toggle_class(div, "active", /*isActive*/ ctx[1]);
-    			add_location(div, file$1, 30, 0, 504);
+    			add_location(div, file$1, 31, 0, 561);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1075,7 +1075,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (62:2) {#each familyStructure as familyMember}
+    // (66:2) {#each familyStructure as familyMember}
     function create_each_block(ctx) {
     	let familynode;
     	let current;
@@ -1112,7 +1112,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(62:2) {#each familyStructure as familyMember}",
+    		source: "(66:2) {#each familyStructure as familyMember}",
     		ctx
     	});
 
@@ -1188,10 +1188,10 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			add_location(button0, file, 54, 0, 1072);
-    			add_location(button1, file, 57, 2, 1134);
+    			add_location(button0, file, 54, 0, 1058);
+    			add_location(button1, file, 57, 2, 1120);
     			attr_dev(div, "class", "svelte-ufz2tx");
-    			add_location(div, file, 56, 0, 1126);
+    			add_location(div, file, 56, 0, 1112);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1347,41 +1347,42 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
     	let y;
+    	console.log('Runs once?');
     	let currentTitle = 'My app';
 
     	let familyStructure = [
     		{
     			isParent: true,
-    			name: "Chris",
+    			name: 'Chris',
     			children: [
     				{
     					isParent: true,
-    					name: "Moe",
-    					children: [{ isParent: false, name: "Julie" }]
+    					name: 'Moe',
+    					children: [{ isParent: false, name: 'Julie' }]
     				}
     			]
     		},
-    		{ isParent: false, name: "Anna" }
+    		{ isParent: false, name: 'Anna' }
     	];
 
     	let renderedComponent = {
     		cmp: Product,
-    		title: "Test Product",
-    		id: "p1"
+    		title: 'Test Product',
+    		id: 'p1'
     	};
 
     	function toggle() {
     		if (renderedComponent.cmp === Product) {
     			$$invalidate(2, renderedComponent = {
     				cmp: CartItem,
-    				title: "Another Product",
-    				id: "p2"
+    				title: 'Another Product',
+    				id: 'p2'
     			});
     		} else {
     			$$invalidate(2, renderedComponent = {
     				cmp: Product,
-    				title: "Test Product",
-    				id: "p1"
+    				title: 'Test Product',
+    				id: 'p1'
     			});
     		}
     	}
